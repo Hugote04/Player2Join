@@ -1,7 +1,6 @@
 🎮 Player2Join | Video Game Collective & Manager
+
 Este proyecto es una Single Page Application (SPA) desarrollada con Angular 21 para el proyecto final de la asignatura Desarrollo Web en Entorno Servidor (DWES). La aplicación permite explorar el catálogo de RAWG API, autenticarse y gestionar una colección personalizada de videojuegos.
-
-
 
 
 

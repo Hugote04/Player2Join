@@ -13,15 +13,17 @@ export class GameService {
   // Check 34: Signal para estado reactivo
   gamesSig = signal<any[]>([]);
 
-  // Check 12: Obtener lista de juegos populares
-  getGames(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  // Check 12: Obtener lista de juegos populares con paginación
+  getGames(page = 1, pageSize = 20): Observable<any> {
+    return this.http.get<any>(this.apiUrl, {
+      params: { page: page.toString(), page_size: pageSize.toString() }
+    });
   }
 
-  // Check 12: Buscar juegos por nombre
-  searchGames(query: string): Observable<any> {
+  // Check 12: Buscar juegos por nombre con paginación
+  searchGames(query: string, page = 1, pageSize = 20): Observable<any> {
     return this.http.get<any>(this.apiUrl, {
-      params: { search: query }
+      params: { search: query, page: page.toString(), page_size: pageSize.toString() }
     });
   }
 

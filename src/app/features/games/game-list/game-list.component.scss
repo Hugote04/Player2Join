@@ -224,3 +224,59 @@ $transition: 0.3s ease;
   color: $text-muted;
   font-size: 1rem;
 }
+
+// === BADGE COLECCIÓN ===
+.card-saved-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba($accent, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.3px;
+}
+
+// === PAGINACIÓN ===
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.btn-page {
+  padding: 0.55rem 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: $bg-card;
+  color: $text-primary;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: $accent;
+    border-color: $accent;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba($accent, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.page-info {
+  color: $text-muted;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

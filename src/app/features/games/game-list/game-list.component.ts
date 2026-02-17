@@ -1,5 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { GameService } from '../../../core/services/game.service';
+import { CollectionService } from '../../../core/services/collection.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SlicePipe } from '@angular/common';
@@ -49,6 +51,10 @@ import { SlicePipe } from '@angular/common';
                 <div class="game-card__rating">
                   <span>⭐ {{ game.rating }}</span>
                 </div>
+                <!-- Badge colección -->
+                @if (isInCollection(game.id)) {
+                  <span class="card-saved-badge">✔ En colección</span>
+                }
               </div>
               <div class="game-card__info">
                 <h3 class="game-card__name">{{ game.name }}</h3>
@@ -67,6 +73,23 @@ import { SlicePipe } from '@angular/common';
             </a>
           }
         </div>
+
+        <!-- Paginación -->
+        <div class="pagination">
+          <button
+            class="btn-page"
+            [disabled]="currentPage() <= 1"
+            (click)="goToPage(currentPage() - 1)">
+            ← Anterior
+          </button>
+          <span class="page-info">Página {{ currentPage() }}</span>
+          <button
+            class="btn-page"
+            [disabled]="!hasNextPage()"
+            (click)="goToPage(currentPage() + 1)">
+            Siguiente →
+          </button>
+        </div>
       }
 
       <!-- Sin resultados -->
@@ -80,26 +103,42 @@ import { SlicePipe } from '@angular/common';
 })
 export class GameListComponent implements OnInit {
   private gameService = inject(GameService);
+  private collectionService = inject(CollectionService);
+  private authService = inject(AuthService);
 
   // Signals para estado reactivo (Check 34)
   games = signal<any[]>([]);
   loading = signal(false);
   searchQuery = '';
 
+  // Paginación
+  currentPage = signal(1);
+  totalResults = signal(0);
+  pageSize = 20;
+  hasNextPage = computed(() => this.currentPage() * this.pageSize < this.totalResults());
+
   ngOnInit() {
+    // Cargar colección del usuario (para badges)
+    if (this.authService.isAuthenticated()) {
+      this.collectionService.loadUserCollection();
+    }
     this.loadGames();
   }
 
-  loadGames(search?: string) {
+  loadGames(search?: string, page = 1) {
     this.loading.set(true);
     const request = search
-      ? this.gameService.searchGames(search)
-      : this.gameService.getGames();
+      ? this.gameService.searchGames(search, page, this.pageSize)
+      : this.gameService.getGames(page, this.pageSize);
 
     request.subscribe({
       next: (data: any) => {
         this.games.set(data.results);
+        this.totalResults.set(data.count ?? 0);
+        this.currentPage.set(page);
         this.loading.set(false);
+        // Scroll arriba al cambiar de página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       },
       error: () => this.loading.set(false)
     });
@@ -107,7 +146,17 @@ export class GameListComponent implements OnInit {
 
   onSearch() {
     const query = this.searchQuery.trim();
-    this.loadGames(query || undefined);
+    this.loadGames(query || undefined, 1);
+  }
+
+  goToPage(page: number) {
+    const query = this.searchQuery.trim();
+    this.loadGames(query || undefined, page);
+  }
+
+  /** Comprueba si un juego está en la colección del usuario */
+  isInCollection(gameId: number): boolean {
+    return this.collectionService.isSaved(String(gameId));
   }
 
   // Mapea plataformas a iconos

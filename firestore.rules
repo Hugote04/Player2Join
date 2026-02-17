@@ -1,0 +1,61 @@
+rules_version = '2';
+
+// Reglas de seguridad Firestore para Player2Join
+// ================================================
+// INSTRUCCIONES: Copia estas reglas en la consola de Firebase:
+// 1. Ve a https://console.firebase.google.com/project/player2join-577dd/firestore/rules
+// 2. Pega todo este contenido
+// 3. Haz clic en "Publicar"
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // === PERFILES DE USUARIO ===
+    // Colección: profiles/{uid}
+    // Campos: uid, username, email, photoURL, createdAt
+    match /profiles/{userId} {
+      // Cualquier usuario autenticado puede leer perfiles
+      allow read: if request.auth != null;
+
+      // Solo el propio usuario puede crear/editar su perfil
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.keys().hasAll(['uid', 'username', 'email', 'photoURL', 'createdAt'])
+                    && request.resource.data.uid == userId
+                    && request.resource.data.username is string
+                    && request.resource.data.email is string;
+
+      allow update: if request.auth != null
+                    && request.auth.uid == userId;
+
+      allow delete: if request.auth != null
+                    && request.auth.uid == userId;
+    }
+
+    // === COLECCIÓN DE JUEGOS GUARDADOS ===
+    // Colección: collections/{uid_gameId}
+    // Campos: id, name, background_image, rating, released, uid, addedAt
+    match /collections/{docId} {
+      // Solo el dueño puede leer sus juegos guardados
+      allow read: if request.auth != null
+                  && resource.data.uid == request.auth.uid;
+
+      // Solo el dueño puede añadir a su colección
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasAll(['id', 'name', 'uid', 'addedAt']);
+
+      // Solo el dueño puede quitar de su colección
+      allow delete: if request.auth != null
+                    && resource.data.uid == request.auth.uid;
+
+      // No se permite actualizar juegos guardados (se borran y se vuelven a añadir)
+      allow update: if false;
+    }
+
+    // Denegar todo lo demás
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

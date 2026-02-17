@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { CollectionService, SavedGame } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ProfileService } from '../../../core/services/profile.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -62,20 +63,22 @@ import { AuthService } from '../../../core/services/auth.service';
 export class DashboardComponent implements OnInit {
   private collectionService = inject(CollectionService);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
 
   // Signals (Check 34)
   games = signal<SavedGame[]>([]);
   loading = signal(false);
   removing = signal(false);
 
-  // Nombre del usuario
-  userName = signal('Jugador');
+  // Nombre gamer desde el perfil de Firestore
+  userName = computed(() => {
+    const prof = this.profileService.profileSig();
+    if (prof?.username) return prof.username;
+    const user = this.authService.currentUserSig();
+    return user?.email?.split('@')[0] ?? 'Jugador';
+  });
 
   ngOnInit() {
-    const user = this.authService.currentUserSig();
-    if (user?.email) {
-      this.userName.set(user.email.split('@')[0]);
-    }
     this.loadGames();
   }
 

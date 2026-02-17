@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
+import { ProfileService } from '../../../core/services/profile.service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -14,7 +15,55 @@ import { Router, RouterLink } from '@angular/router';
         <h2 class="auth-title">🎮 Únete a Player2Join</h2>
         <p class="auth-subtitle">Crea tu perfil de jugador</p>
 
-        <!-- Nombre -->
+        <!-- Foto de perfil -->
+        <div class="avatar-section">
+          <div class="avatar-preview">
+            @if (photoPreview()) {
+              <img [src]="photoPreview()" alt="Avatar" />
+            } @else {
+              <span class="avatar-placeholder">📷</span>
+            }
+          </div>
+
+          <!-- Selector desplegable -->
+          <div class="avatar-picker">
+            <button type="button" class="btn-avatar-toggle" (click)="togglePhotoMenu()">
+              {{ photoMode() === 'none' ? 'Añadir foto' : photoMode() === 'url' ? 'Foto por URL' : 'Foto local' }} ▾
+            </button>
+            @if (showPhotoMenu()) {
+              <div class="avatar-dropdown">
+                <button type="button" (click)="selectPhotoMode('file')">📁 Subir imagen local</button>
+                <button type="button" (click)="selectPhotoMode('url')">🔗 Usar URL de imagen</button>
+              </div>
+            }
+          </div>
+
+          <!-- Input URL -->
+          @if (photoMode() === 'url') {
+            <input
+              type="url"
+              class="photo-url-input"
+              placeholder="https://ejemplo.com/mi-avatar.png"
+              (input)="onPhotoUrlChange($event)"
+            />
+          }
+
+          <!-- Input File (oculto, se abre con botón) -->
+          @if (photoMode() === 'file') {
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              class="file-hidden"
+              (change)="onFileSelected($event)"
+            />
+            <button type="button" class="btn-file" (click)="fileInput.click()">
+              Seleccionar archivo
+            </button>
+          }
+        </div>
+
+        <!-- Nombre Gamer -->
         <div class="form-group">
           <label for="nombre">Nombre de Jugador</label>
           <input
@@ -26,6 +75,9 @@ import { Router, RouterLink } from '@angular/router';
           />
           @if (registerForm.get('nombre')!.hasError('required') && registerForm.get('nombre')!.touched) {
             <span class="field-error">El nombre es obligatorio</span>
+          }
+          @if (registerForm.get('nombre')!.hasError('minlength') && registerForm.get('nombre')!.touched) {
+            <span class="field-error">Mínimo 3 caracteres</span>
           }
         </div>
 
@@ -64,8 +116,8 @@ import { Router, RouterLink } from '@angular/router';
         </div>
 
         <!-- Submit -->
-        <button class="btn-submit" type="submit" [disabled]="registerForm.invalid">
-          Crear Cuenta
+        <button class="btn-submit" type="submit" [disabled]="registerForm.invalid || submitting()">
+          {{ submitting() ? 'Creando...' : 'Crear Cuenta' }}
         </button>
 
         <!-- Error global -->
@@ -84,27 +136,83 @@ import { Router, RouterLink } from '@angular/router';
 export class RegistroComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
   private router = inject(Router);
 
-  // Signal para errores de Firebase (Check 34)
+  // Signals
   errorMsg = signal<string | null>(null);
+  submitting = signal(false);
+  photoPreview = signal<string | null>(null);
+  photoMode = signal<'none' | 'url' | 'file'>('none');
+  showPhotoMenu = signal(false);
 
-  // Reactive Form con validaciones (Check 1, 2, 3)
+  // Reactive Form con validaciones
   registerForm = this.fb.group({
-    nombre:   ['', Validators.required],
+    nombre:   ['', [Validators.required, Validators.minLength(3)]],
     email:    ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
+  togglePhotoMenu() {
+    this.showPhotoMenu.update(v => !v);
+  }
+
+  selectPhotoMode(mode: 'url' | 'file') {
+    this.photoMode.set(mode);
+    this.showPhotoMenu.set(false);
+    this.photoPreview.set(null);
+  }
+
+  onPhotoUrlChange(event: Event) {
+    const val = (event.target as HTMLInputElement).value.trim();
+    this.photoPreview.set(val || null);
+  }
+
+  onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    // Validar tamaño antes de leer (max 800 KB)
+    if (file.size > 800 * 1024) {
+      this.errorMsg.set('La imagen es demasiado grande. Máximo 800 KB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.photoPreview.set(reader.result as string);
+      this.errorMsg.set(null);
+    };
+    reader.readAsDataURL(file);
+  }
+
   async onRegister() {
     if (this.registerForm.invalid) return;
 
-    const { email, password } = this.registerForm.getRawValue();
+    this.submitting.set(true);
+    this.errorMsg.set(null);
+    const { nombre, email, password } = this.registerForm.getRawValue();
+
+    // Validar foto si es base64
+    const photo = this.photoPreview() ?? '';
+    if (photo && !this.profileService.validatePhoto(photo)) {
+      this.errorMsg.set('La imagen es demasiado grande. Máximo 800 KB.');
+      this.submitting.set(false);
+      return;
+    }
+
     try {
-      await this.authService.register(email!, password!);
+      const cred = await this.authService.register(email!, password!);
+
+      // Guardar perfil en Firestore: username, email, photoURL
+      await this.profileService.createProfile(cred.user.uid, {
+        username: nombre!,
+        email: email!,
+        photoURL: photo,
+      });
+
       this.router.navigate(['/dashboard']);
     } catch (err: any) {
-      // Mensajes traducidos de Firebase
       const code = err?.code;
       if (code === 'auth/email-already-in-use') {
         this.errorMsg.set('Este correo ya está registrado.');
@@ -113,6 +221,8 @@ export class RegistroComponent {
       } else {
         this.errorMsg.set('Error al crear la cuenta. Inténtalo de nuevo.');
       }
+    } finally {
+      this.submitting.set(false);
     }
   }
 }

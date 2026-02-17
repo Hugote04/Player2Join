@@ -23,6 +23,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/games/dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard] 
   },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./features/auth/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
 
   // Detalle de juego (Check 32)
   {

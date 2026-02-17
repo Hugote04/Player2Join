@@ -29,6 +29,30 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
+  // Social
+  {
+    path: 'buscar',
+    loadComponent: () => import('./features/social/user-search/user-search.component').then(m => m.UserSearchComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'usuario/:uid',
+    loadComponent: () => import('./features/social/user-profile/user-profile.component').then(m => m.UserProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'usuario/:uid/seguidores',
+    loadComponent: () => import('./features/social/follow-list/follow-list.component').then(m => m.FollowListComponent),
+    canActivate: [authGuard],
+    data: { mode: 'followers' }
+  },
+  {
+    path: 'usuario/:uid/siguiendo',
+    loadComponent: () => import('./features/social/follow-list/follow-list.component').then(m => m.FollowListComponent),
+    canActivate: [authGuard],
+    data: { mode: 'following' }
+  },
+
   // Detalle de juego (Check 32)
   {
     path: 'game/:id',

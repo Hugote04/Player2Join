@@ -35,6 +35,13 @@ export class CollectionService {
     return collection(this.firestore, 'collections');
   }
 
+  /** Carga los juegos guardados de cualquier usuario por UID */
+  async loadCollectionByUid(uid: string): Promise<SavedGame[]> {
+    const q = query(this.colRef, where('uid', '==', uid));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data() as SavedGame);
+  }
+
   /** Carga los juegos guardados del usuario actual */
   async loadUserCollection(): Promise<SavedGame[]> {
     const uid = this.auth.currentUserSig()?.uid;

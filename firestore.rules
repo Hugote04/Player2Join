@@ -12,7 +12,7 @@ service cloud.firestore {
 
     // === PERFILES DE USUARIO ===
     // Colección: profiles/{uid}
-    // Campos: uid, username, email, photoURL, createdAt
+    // Campos: uid, username, email, photoURL, description, createdAt
     match /profiles/{userId} {
       // Cualquier usuario autenticado puede leer perfiles
       allow read: if request.auth != null;
@@ -20,7 +20,7 @@ service cloud.firestore {
       // Solo el propio usuario puede crear/editar su perfil
       allow create: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.keys().hasAll(['uid', 'username', 'email', 'photoURL', 'createdAt'])
+                    && request.resource.data.keys().hasAll(['uid', 'username', 'email', 'photoURL', 'description', 'createdAt'])
                     && request.resource.data.uid == userId
                     && request.resource.data.username is string
                     && request.resource.data.email is string;
@@ -36,9 +36,8 @@ service cloud.firestore {
     // Colección: collections/{uid_gameId}
     // Campos: id, name, background_image, rating, released, uid, addedAt
     match /collections/{docId} {
-      // Solo el dueño puede leer sus juegos guardados
-      allow read: if request.auth != null
-                  && resource.data.uid == request.auth.uid;
+      // Cualquier usuario autenticado puede ver colecciones (para perfil público)
+      allow read: if request.auth != null;
 
       // Solo el dueño puede añadir a su colección
       allow create: if request.auth != null
@@ -51,6 +50,48 @@ service cloud.firestore {
 
       // No se permite actualizar juegos guardados (se borran y se vuelven a añadir)
       allow update: if false;
+    }
+
+    // === SISTEMA DE SEGUIMIENTO (follows) ===
+    // Colección: follows/{followerId_followingId}
+    // Campos: followerId, followingId, createdAt
+    match /follows/{docId} {
+      // Cualquier usuario autenticado puede leer (para contar seguidores)
+      allow read: if request.auth != null;
+
+      // Solo quien sigue puede crear el follow
+      allow create: if request.auth != null
+                    && request.resource.data.followerId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['followerId', 'followingId', 'createdAt']);
+
+      // Solo quien sigue puede borrar (unfollow)
+      allow delete: if request.auth != null
+                    && resource.data.followerId == request.auth.uid;
+
+      // No se actualiza un follow
+      allow update: if false;
+    }
+
+    // === NOTIFICACIONES ===
+    // Colección: notifications/{notifId}
+    // Campos: type, fromUid, fromUsername, fromPhotoURL, toUid, read, createdAt
+    match /notifications/{notifId} {
+      // Solo el destinatario puede leer sus notificaciones
+      allow read: if request.auth != null
+                  && resource.data.toUid == request.auth.uid;
+
+      // Cualquier usuario autenticado puede crear una notificación para otro
+      allow create: if request.auth != null
+                    && request.resource.data.fromUid == request.auth.uid
+                    && request.resource.data.keys().hasAll(['type', 'fromUid', 'fromUsername', 'toUid', 'read', 'createdAt']);
+
+      // Solo el destinatario puede actualizar (marcar como leída)
+      allow update: if request.auth != null
+                    && resource.data.toUid == request.auth.uid;
+
+      // Solo el destinatario puede borrar sus notificaciones
+      allow delete: if request.auth != null
+                    && resource.data.toUid == request.auth.uid;
     }
 
     // Denegar todo lo demás

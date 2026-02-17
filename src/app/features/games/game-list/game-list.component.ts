@@ -117,8 +117,11 @@ export class GameListComponent implements OnInit {
   pageSize = 20;
   hasNextPage = computed(() => this.currentPage() * this.pageSize < this.totalResults());
 
+  // ¿Está buscando el usuario?
+  isSearching = signal(false);
+
   ngOnInit() {
-    // Cargar colección del usuario (para badges)
+    // Cargar colección del usuario (para badges y filtrado)
     if (this.authService.isAuthenticated()) {
       this.collectionService.loadUserCollection();
     }
@@ -127,13 +130,19 @@ export class GameListComponent implements OnInit {
 
   loadGames(search?: string, page = 1) {
     this.loading.set(true);
+    this.isSearching.set(!!search);
     const request = search
       ? this.gameService.searchGames(search, page, this.pageSize)
       : this.gameService.getGames(page, this.pageSize);
 
     request.subscribe({
       next: (data: any) => {
-        this.games.set(data.results);
+        let results = data.results;
+        // Si NO está buscando, ocultar los juegos que ya están en la colección
+        if (!search && this.authService.isAuthenticated()) {
+          results = results.filter((g: any) => !this.collectionService.isSaved(String(g.id)));
+        }
+        this.games.set(results);
         this.totalResults.set(data.count ?? 0);
         this.currentPage.set(page);
         this.loading.set(false);

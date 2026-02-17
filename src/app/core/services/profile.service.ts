@@ -5,6 +5,11 @@ import {
   setDoc,
   getDoc,
   updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
 } from '@angular/fire/firestore';
 
 export interface UserProfile {
@@ -12,6 +17,7 @@ export interface UserProfile {
   username: string;        // Nombre gamer del jugador
   email: string;
   photoURL: string;        // URL remota o data:image base64
+  description: string;     // Descripción / bio del jugador
   createdAt: number;
 }
 
@@ -36,12 +42,13 @@ export class ProfileService {
   }
 
   /** Crea el perfil del usuario en Firestore tras el registro */
-  async createProfile(uid: string, data: { username: string; email: string; photoURL: string }): Promise<void> {
+  async createProfile(uid: string, data: { username: string; email: string; photoURL: string; description?: string }): Promise<void> {
     const profile: UserProfile = {
       uid,
       username: data.username,
       email: data.email,
       photoURL: data.photoURL,
+      description: data.description ?? '',
       createdAt: Date.now(),
     };
     await setDoc(doc(this.firestore, 'profiles', uid), profile);
@@ -61,9 +68,24 @@ export class ProfileService {
   }
 
   /** Actualiza campos del perfil */
-  async updateProfile(uid: string, data: Partial<Pick<UserProfile, 'username' | 'photoURL'>>): Promise<void> {
+  async updateProfile(uid: string, data: Partial<Pick<UserProfile, 'username' | 'photoURL' | 'description'>>): Promise<void> {
     await updateDoc(doc(this.firestore, 'profiles', uid), data);
     // Actualizar Signal local
     this.profileSig.update(prev => prev ? { ...prev, ...data } : prev);
+  }
+
+  /** Carga el perfil público de cualquier usuario */
+  async getPublicProfile(uid: string): Promise<UserProfile | null> {
+    const snap = await getDoc(doc(this.firestore, 'profiles', uid));
+    return snap.exists() ? (snap.data() as UserProfile) : null;
+  }
+
+  /** Busca usuarios por prefijo de username */
+  async searchUsers(term: string): Promise<UserProfile[]> {
+    if (!term || term.length < 2) return [];
+    const col = collection(this.firestore, 'profiles');
+    const q = query(col, where('username', '>=', term), where('username', '<=', term + '\uf8ff'), limit(20));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data() as UserProfile);
   }
 }

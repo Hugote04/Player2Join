@@ -9,6 +9,7 @@ import {
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { ProfileService } from './profile.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AuthService {
   private auth = inject(Auth);
   private router = inject(Router);
   private profileService = inject(ProfileService);
+  private notificationService = inject(NotificationService);
 
   // RA8 - Check 34: Estado de autenticación reactivo con Signals
   currentUserSig = signal<User | null | undefined>(undefined);
@@ -28,8 +30,10 @@ export class AuthService {
       // Cargar perfil de Firestore al detectar usuario
       if (u) {
         this.profileService.loadProfile(u.uid);
+        this.notificationService.listenNotifications(u.uid);
       } else {
         this.profileService.profileSig.set(null);
+        this.notificationService.clear();
       }
     });
   }

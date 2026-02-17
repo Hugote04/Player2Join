@@ -2,11 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProfileService, UserProfile } from '../../../core/services/profile.service';
+import { SocialService } from '../../../core/services/social.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   styleUrl: './profile.component.scss',
   template: `
     <section class="profile-page">
@@ -20,6 +22,18 @@ import { ProfileService, UserProfile } from '../../../core/services/profile.serv
       @if (!loading() && profile()) {
         <div class="profile-card">
           <h2 class="profile-title">👤 Mi Perfil</h2>
+
+          <!-- Stats sociales -->
+          <div class="social-stats">
+            <a [routerLink]="['/usuario', myUid(), 'seguidores']" class="stat-item">
+              <span class="stat-number">{{ followersCount() }}</span>
+              <span class="stat-label">Seguidores</span>
+            </a>
+            <a [routerLink]="['/usuario', myUid(), 'siguiendo']" class="stat-item">
+              <span class="stat-number">{{ followingCount() }}</span>
+              <span class="stat-label">Siguiendo</span>
+            </a>
+          </div>
 
           <!-- Avatar actual -->
           <div class="avatar-section">
@@ -87,6 +101,18 @@ import { ProfileService, UserProfile } from '../../../core/services/profile.serv
             </div>
 
             <div class="form-group">
+              <label for="description">Descripción</label>
+              <textarea
+                id="description"
+                formControlName="description"
+                placeholder="Cuéntale al mundo quién eres como gamer..."
+                rows="3"
+                maxlength="300"
+              ></textarea>
+              <span class="field-hint">Máximo 300 caracteres</span>
+            </div>
+
+            <div class="form-group">
               <label>Email</label>
               <input type="email" [value]="profile()!.email" disabled class="disabled-input" />
               <span class="field-hint">El email no se puede cambiar</span>
@@ -112,6 +138,7 @@ export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
+  private socialService = inject(SocialService);
 
   // Signals
   profile = signal<UserProfile | null>(null);
@@ -122,21 +149,45 @@ export class ProfileComponent implements OnInit {
   photoPreview = signal<string | null>(null);
   photoMode = signal<'none' | 'url' | 'file'>('none');
   showPhotoMenu = signal(false);
+  followersCount = signal(0);
+  followingCount = signal(0);
+  myUid = signal('');
 
   editForm = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
+    description: [''],
   });
 
   async ngOnInit() {
     const user = this.authService.currentUserSig();
     if (!user) return;
 
+    this.myUid.set(user.uid);
     this.loading.set(true);
-    const prof = await this.profileService.loadProfile(user.uid);
+    let prof = await this.profileService.loadProfile(user.uid);
+
+    // Si no existe perfil (usuario registrado antes del sistema de perfiles), crearlo
+    if (!prof) {
+      const fallbackName = user.email?.split('@')[0] ?? 'Jugador';
+      await this.profileService.createProfile(user.uid, {
+        username: fallbackName,
+        email: user.email ?? '',
+        photoURL: '',
+        description: '',
+      });
+      prof = this.profileService.profileSig();
+    }
+
     if (prof) {
       this.profile.set(prof);
-      this.editForm.patchValue({ username: prof.username });
+      this.editForm.patchValue({
+        username: prof.username,
+        description: prof.description ?? '',
+      });
     }
+
+    // Cargar conteos sociales
+    await this.loadSocialCounts(user.uid);
     this.loading.set(false);
   }
 
@@ -185,6 +236,7 @@ export class ProfileComponent implements OnInit {
     try {
       const updates: any = {
         username: this.editForm.value.username,
+        description: this.editForm.value.description ?? '',
       };
 
       // Solo actualizar foto si se ha cambiado
@@ -207,6 +259,19 @@ export class ProfileComponent implements OnInit {
       this.errorMsg.set('Error al guardar. Inténtalo de nuevo.');
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  private async loadSocialCounts(uid: string) {
+    try {
+      const [followers, following] = await Promise.all([
+        this.socialService.getFollowersCount(uid),
+        this.socialService.getFollowingCount(uid),
+      ]);
+      this.followersCount.set(followers);
+      this.followingCount.set(following);
+    } catch {
+      // Sin datos de follows aún
     }
   }
 }

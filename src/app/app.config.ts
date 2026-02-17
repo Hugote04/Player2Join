@@ -9,8 +9,9 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from './environments/environments';
 
-// Interceptor (Requisito RA8 - Check 33)
+// Interceptores (Requisito RA8 - Check 33)
 import { rawgInterceptor } from './core/interceptors/rawg.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,8 +19,8 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
 
-    // Check 33: HttpClient con interceptor RAWG
-    provideHttpClient(withInterceptors([rawgInterceptor])),
+    // Check 33: HttpClient con interceptores (Auth JWT + RAWG API key)
+    provideHttpClient(withInterceptors([authInterceptor, rawgInterceptor])),
 
     // RA6: Firebase
     provideFirebaseApp(() => initializeApp(environment.firebase)),

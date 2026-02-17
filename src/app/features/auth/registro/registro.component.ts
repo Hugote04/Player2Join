@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { Router, RouterLink } from '@angular/router';
@@ -115,6 +115,24 @@ import { Router, RouterLink } from '@angular/router';
           }
         </div>
 
+        <!-- Confirmar contraseña -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Repite tu contraseña"
+            [class.invalid]="registerForm.get('confirmPassword')!.invalid && registerForm.get('confirmPassword')!.touched"
+          />
+          @if (registerForm.get('confirmPassword')!.hasError('required') && registerForm.get('confirmPassword')!.touched) {
+            <span class="field-error">Debes confirmar la contraseña</span>
+          }
+          @if (registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')!.touched) {
+            <span class="field-error">Las contraseñas no coinciden</span>
+          }
+        </div>
+
         <!-- Submit -->
         <button class="btn-submit" type="submit" [disabled]="registerForm.invalid || submitting()">
           {{ submitting() ? 'Creando...' : 'Crear Cuenta' }}
@@ -147,11 +165,20 @@ export class RegistroComponent {
   showPhotoMenu = signal(false);
 
   // Reactive Form con validaciones
+  // Check 2: Validaciones — email válido, password min 6, contraseñas coinciden
   registerForm = this.fb.group({
-    nombre:   ['', [Validators.required, Validators.minLength(3)]],
-    email:    ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
-  });
+    nombre:          ['', [Validators.required, Validators.minLength(3)]],
+    email:           ['', [Validators.required, Validators.email]],
+    password:        ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: this.passwordsMatchValidator });
+
+  /** Validador de grupo — confirma que password y confirmPassword coinciden */
+  private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const pass = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+    return pass === confirm ? null : { passwordsMismatch: true };
+  }
 
   togglePhotoMenu() {
     this.showPhotoMenu.update(v => !v);

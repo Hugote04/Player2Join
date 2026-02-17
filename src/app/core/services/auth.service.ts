@@ -11,6 +11,19 @@ import { Router } from '@angular/router';
 import { ProfileService } from './profile.service';
 import { NotificationService } from './notification.service';
 
+/** Clave para almacenar el JWT en localStorage (Check 5) */
+const JWT_KEY = 'p2j_token';
+
+/**
+ * AuthService — Gestiona la autenticación con Firebase Auth.
+ *
+ * Proporciona métodos de login, registro y logout, y expone el
+ * estado reactivo del usuario con Signals (RA8 - Check 34).
+ *
+ * @remarks
+ * El JWT de Firebase se almacena en localStorage para que
+ * el AuthInterceptor lo adjunte a las peticiones HTTP.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -20,43 +33,88 @@ export class AuthService {
   private profileService = inject(ProfileService);
   private notificationService = inject(NotificationService);
 
-  // RA8 - Check 34: Estado de autenticación reactivo con Signals
+  /** Signal reactivo con el usuario de Firebase (Check 34) */
   currentUserSig = signal<User | null | undefined>(undefined);
+
+  /** Signal con el rol del usuario: 'admin' | 'user' */
+  roleSig = signal<'admin' | 'user'>('user');
 
   constructor() {
     // Escucha cambios de Firebase y actualiza el Signal automáticamente
-    user(this.auth).subscribe((u) => {
+    user(this.auth).subscribe(async (u) => {
       this.currentUserSig.set(u);
-      // Cargar perfil de Firestore al detectar usuario
       if (u) {
+        // Check 5: Almacenar JWT en localStorage
+        const token = await u.getIdToken();
+        localStorage.setItem(JWT_KEY, token);
+
+        // Cargar perfil y notificaciones
         this.profileService.loadProfile(u.uid);
         this.notificationService.listenNotifications(u.uid);
+
+        // Determinar rol: admin por email (configurable)
+        this.roleSig.set(this.resolveRole(u.email));
       } else {
+        // Check 7: Limpiar token y estado
+        localStorage.removeItem(JWT_KEY);
         this.profileService.profileSig.set(null);
         this.notificationService.clear();
+        this.roleSig.set('user');
       }
     });
   }
 
-  // RA6 - Check 1: Registro
+  /**
+   * Registra un nuevo usuario con email y contraseña.
+   * @param email - Correo del usuario
+   * @param pass  - Contraseña (mín. 6 caracteres)
+   * @returns Credencial de Firebase
+   */
   register(email: string, pass: string) {
     return createUserWithEmailAndPassword(this.auth, email, pass);
   }
 
-  // RA6 - Check 4: Login
+  /**
+   * Inicia sesión con email y contraseña.
+   * @param email - Correo del usuario
+   * @param pass  - Contraseña
+   * @returns Credencial de Firebase
+   */
   login(email: string, pass: string) {
     return signInWithEmailAndPassword(this.auth, email, pass);
   }
 
-  // RA6 - Check 7: Logout
+  /**
+   * Cierra sesión, elimina el JWT y redirige a /login.
+   */
   logout() {
     return signOut(this.auth).then(() => {
+      localStorage.removeItem(JWT_KEY);
       this.router.navigate(['/login']);
     });
   }
 
-  // Check 31: Método rápido para saber si está autenticado
+  /** Devuelve true si el usuario está autenticado */
   isAuthenticated(): boolean {
     return !!this.currentUserSig();
+  }
+
+  /** Devuelve true si el usuario tiene rol admin */
+  isAdmin(): boolean {
+    return this.roleSig() === 'admin';
+  }
+
+  /** Obtiene el JWT almacenado en localStorage */
+  getToken(): string | null {
+    return localStorage.getItem(JWT_KEY);
+  }
+
+  /**
+   * Resuelve el rol del usuario basado en email.
+   * Los admins se definen por un listado de correos conocidos.
+   */
+  private resolveRole(email: string | null): 'admin' | 'user' {
+    const adminEmails = ['admin@player2join.com'];
+    return email && adminEmails.includes(email) ? 'admin' : 'user';
   }
 }

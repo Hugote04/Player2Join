@@ -114,7 +114,10 @@ export class AuthService {
    * Los admins se definen por un listado de correos conocidos.
    */
   private resolveRole(email: string | null): 'admin' | 'user' {
-    const adminEmails = ['admin@player2join.com'];
+    const adminEmails = [
+      'admin@player2join.com',
+      'marinohugo07@gmail.comsiguiente tarea'
+    ];
     return email && adminEmails.includes(email) ? 'admin' : 'user';
   }
 }

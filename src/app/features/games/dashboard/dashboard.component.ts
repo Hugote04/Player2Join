@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CollectionService, SavedGame } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProfileService } from '../../../core/services/profile.service';
@@ -8,7 +9,7 @@ import { ProfileService } from '../../../core/services/profile.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, FormsModule],
   styleUrl: './dashboard.component.scss',
   template: `
     <section class="dashboard">
@@ -44,17 +45,60 @@ import { ProfileService } from '../../../core/services/profile.service';
               <a [routerLink]="['/game', game.id]" class="card-link">
                 <div class="card-img" [style.backgroundImage]="'url(' + game.background_image + ')'">
                   <span class="card-rating">⭐ {{ game.rating | number:'1.1-1' }}</span>
+                  @if (game.status) {
+                    <span class="card-status" [class]="'status-' + game.status">{{ statusLabel(game.status) }}</span>
+                  }
                 </div>
                 <div class="card-body">
                   <h3 class="card-title">{{ game.name }}</h3>
                   <span class="card-date">{{ game.released }}</span>
+                  @if (game.notes) {
+                    <p class="card-notes">📝 {{ game.notes }}</p>
+                  }
                 </div>
               </a>
-              <button class="btn-remove" (click)="removeGame(game)" [disabled]="removing()">
-                🗑️ Quitar
-              </button>
+
+              <!-- Acciones: todos pueden editar/eliminar SUS juegos -->
+              <div class="card-actions">
+                <button class="btn-edit" (click)="openEdit(game)">✏️ Editar</button>
+                <button class="btn-delete" (click)="confirmDelete(game)" [disabled]="removing()">🗑️ Quitar</button>
+              </div>
             </div>
           }
+        </div>
+      }
+
+      <!-- Check 16: Modal de edición pre-rellenado (solo admin) -->
+      @if (editingGame()) {
+        <div class="modal-overlay" (click)="closeEdit()">
+          <div class="modal-card" (click)="$event.stopPropagation()">
+            <h3>✏️ Editar — {{ editingGame()!.name }}</h3>
+
+            <div class="form-group">
+              <label for="editStatus">Estado</label>
+              <select id="editStatus" [(ngModel)]="editStatus">
+                <option value="">Sin estado</option>
+                <option value="playing">🎮 Jugando</option>
+                <option value="completed">✅ Completado</option>
+                <option value="wishlist">⭐ Lista de deseos</option>
+                <option value="dropped">❌ Abandonado</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="editNotes">Notas personales</label>
+              <textarea id="editNotes" [(ngModel)]="editNotes" rows="3" placeholder="Escribe tus notas sobre este juego..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+              <button class="btn-cancel" (click)="closeEdit()">Cancelar</button>
+              <button class="btn-save" (click)="saveEdit()" [disabled]="saving()">{{ saving() ? 'Guardando...' : 'Guardar' }}</button>
+            </div>
+
+            @if (editMsg()) {
+              <p class="edit-msg success">{{ editMsg() }}</p>
+            }
+          </div>
         </div>
       }
     </section>
@@ -69,6 +113,16 @@ export class DashboardComponent implements OnInit {
   games = signal<SavedGame[]>([]);
   loading = signal(false);
   removing = signal(false);
+
+  // Edit modal signals
+  editingGame = signal<SavedGame | null>(null);
+  editStatus = '';
+  editNotes = '';
+  saving = signal(false);
+  editMsg = signal<string | null>(null);
+
+  // Check 10: ¿Es admin?
+  isAdmin = computed(() => this.authService.isAdmin());
 
   // Nombre gamer desde el perfil de Firestore
   userName = computed(() => {
@@ -94,14 +148,68 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  async removeGame(game: SavedGame) {
+  // Check 16: Abrir modal de edición pre-rellenado
+  openEdit(game: SavedGame) {
+    this.editingGame.set(game);
+    this.editStatus = game.status ?? '';
+    this.editNotes = game.notes ?? '';
+    this.editMsg.set(null);
+  }
+
+  closeEdit() {
+    this.editingGame.set(null);
+  }
+
+  // Check 16: Guardar edición
+  async saveEdit() {
+    const game = this.editingGame();
+    if (!game) return;
+
+    this.saving.set(true);
+    try {
+      const uid = this.authService.currentUserSig()?.uid;
+      if (!uid) return;
+      const data: any = {
+        notes: this.editNotes.trim(),
+        status: this.editStatus || null
+      };
+      await this.collectionService.updateGame(uid, game.id, data);
+
+      // Actualizar lista local
+      this.games.update(list =>
+        list.map(g => g.id === game.id ? { ...g, ...data } : g)
+      );
+      this.editMsg.set('✅ Guardado correctamente');
+      setTimeout(() => this.closeEdit(), 800);
+    } catch {
+      this.editMsg.set('❌ Error al guardar');
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  // Check 17 + 18: Eliminar con confirmación
+  async confirmDelete(game: SavedGame) {
+    const ok = confirm(`¿Seguro que quieres quitar "${game.name}" de tu colección?`);
+    if (!ok) return;
+
     this.removing.set(true);
     try {
       await this.collectionService.removeGame(game.id);
-      // Actualizar la lista local
       this.games.update(list => list.filter(g => g.id !== game.id));
     } finally {
       this.removing.set(false);
     }
+  }
+
+  // Label legible del estado
+  statusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      playing: '🎮 Jugando',
+      completed: '✅ Completado',
+      wishlist: '⭐ Deseado',
+      dropped: '❌ Abandonado'
+    };
+    return labels[status] ?? status;
   }
 }

@@ -24,6 +24,9 @@ import { NotificationService, AppNotification } from '../../../core/services/not
           <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Mi Colección</a>
           <a routerLink="/buscar" routerLinkActive="active" class="nav-link">Jugadores</a>
         }
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin/historial" routerLinkActive="active" class="nav-link admin-link">🛡️ Admin</a>
+        }
       </div>
 
       <!-- Auth -->
@@ -87,6 +90,9 @@ import { NotificationService, AppNotification } from '../../../core/services/not
               }
             </div>
             <span class="user-name">{{ gamerName() }}</span>
+            @if (authService.isAdmin()) {
+              <span class="role-badge admin">ADMIN</span>
+            }
           </a>
           <button class="btn-logout" (click)="authService.logout()">Logout</button>
         } @else {

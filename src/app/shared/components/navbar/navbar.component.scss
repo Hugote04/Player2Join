@@ -360,3 +360,31 @@ $transition-fast: 0.25s ease;
   font-size: 0.7rem;
   color: $text-muted;
 }
+
+// --- Role Badge ---
+.role-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.4rem;
+
+  &.admin {
+    background: $accent;
+    color: #fff;
+    box-shadow: 0 0 8px rgba($accent, 0.5);
+  }
+}
+
+// --- Admin Nav Link ---
+.admin-link {
+  color: #ffc107 !important;
+  font-weight: 600;
+
+  &:hover, &.active {
+    color: #ffdb4d !important;
+    text-shadow: 0 0 8px rgba(#ffc107, 0.4);
+  }
+}

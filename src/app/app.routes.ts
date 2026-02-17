@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   // Públicas (Check 22, 23, 24)
@@ -57,6 +58,13 @@ export const routes: Routes = [
   {
     path: 'game/:id',
     loadComponent: () => import('./features/games/game-detail/game-detail.component').then(m => m.GameDetailComponent)
+  },
+
+  // Admin (Check 10 - solo admin con roleGuard)
+  {
+    path: 'admin/historial',
+    loadComponent: () => import('./features/admin/admin-history/admin-history.component').then(m => m.AdminHistoryComponent),
+    canActivate: [roleGuard]
   },
 
   // Error (Check 11 / 28)

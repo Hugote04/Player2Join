@@ -41,7 +41,8 @@ import { SlicePipe } from '@angular/common';
       @if (!loading() && games().length > 0) {
         <div class="games-grid">
           @for (game of games(); track game.id) {
-            <a [routerLink]="['/game', game.id]" class="game-card">
+            <div class="game-card-wrapper">
+              <a [routerLink]="['/game', game.id]" class="game-card">
               <div class="game-card__image">
                 @if (game.background_image) {
                   <img [src]="game.background_image" [alt]="game.name" loading="lazy" />
@@ -71,6 +72,13 @@ import { SlicePipe } from '@angular/common';
                 </div>
               </div>
             </a>
+            <!-- Admin: botón ocultar del catálogo -->
+            @if (isAdmin()) {
+              <button class="btn-admin-hide" (click)="hideFromCatalog($event, game)">
+                🚫 Ocultar del catálogo
+              </button>
+            }
+            </div>
           }
         </div>
 
@@ -120,11 +128,16 @@ export class GameListComponent implements OnInit {
   // ¿Está buscando el usuario?
   isSearching = signal(false);
 
+  // ¿Es admin?
+  isAdmin = computed(() => this.authService.isAdmin());
+
   ngOnInit() {
     // Cargar colección del usuario (para badges y filtrado)
     if (this.authService.isAuthenticated()) {
       this.collectionService.loadUserCollection();
     }
+    // Cargar juegos ocultos del catálogo
+    this.collectionService.loadHiddenGames();
     this.loadGames();
   }
 
@@ -142,11 +155,14 @@ export class GameListComponent implements OnInit {
         if (!search && this.authService.isAuthenticated()) {
           results = results.filter((g: any) => !this.collectionService.isSaved(String(g.id)));
         }
+        // Filtrar juegos ocultos por admin (solo para usuarios normales)
+        if (!this.authService.isAdmin()) {
+          results = results.filter((g: any) => !this.collectionService.isHidden(String(g.id)));
+        }
         this.games.set(results);
         this.totalResults.set(data.count ?? 0);
         this.currentPage.set(page);
         this.loading.set(false);
-        // Scroll arriba al cambiar de página
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
       error: () => this.loading.set(false)
@@ -182,5 +198,20 @@ export class GameListComponent implements OnInit {
       web: '🌐'
     };
     return icons[slug] ?? '🎲';
+  }
+
+  /** Admin: Ocultar un juego del catálogo */
+  async hideFromCatalog(event: Event, game: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    const ok = confirm(`¿Ocultar "${game.name}" del catálogo para todos los usuarios?`);
+    if (!ok) return;
+
+    const uid = this.authService.currentUserSig()?.uid;
+    if (!uid) return;
+
+    await this.collectionService.hideGameFromCatalog(game, uid);
+    // Quitar de la vista local
+    this.games.update(list => list.filter(g => g.id !== game.id));
   }
 }

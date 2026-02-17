@@ -99,10 +99,16 @@ import { AuthService } from '../../../core/services/auth.service';
                 <a [routerLink]="['/game', game.id]" class="game-card">
                   <div class="card-img" [style.backgroundImage]="'url(' + game.background_image + ')'">
                     <span class="card-rating">⭐ {{ game.rating | number:'1.1-1' }}</span>
+                    @if (game.status) {
+                      <span class="card-status" [class]="'status-' + game.status">{{ statusLabel(game.status) }}</span>
+                    }
                   </div>
                   <div class="card-body">
                     <h3 class="card-title">{{ game.name }}</h3>
                     <span class="card-date">{{ game.released }}</span>
+                    @if (game.notes) {
+                      <p class="card-notes">📝 {{ game.notes }}</p>
+                    }
                   </div>
                 </a>
               }
@@ -193,5 +199,16 @@ export class UserProfileComponent implements OnInit {
     } finally {
       this.toggling.set(false);
     }
+  }
+
+  /** Label legible del estado del juego */
+  statusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      playing: '🎮 Jugando',
+      completed: '✅ Completado',
+      wishlist: '⭐ Deseado',
+      dropped: '❌ Abandonado'
+    };
+    return labels[status] ?? status;
   }
 }

@@ -1,0 +1,231 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$bg-input: #16213e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$radius: 10px;
+$transition: 0.3s ease;
+
+// === LOADER ===
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+
+  p {
+    color: $text-muted;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// === HERO BANNER ===
+.detail__hero {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  border-radius: $radius;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba($bg-dark, 0.95) 0%, rgba($bg-dark, 0.3) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+}
+
+.hero-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  color: $text-primary;
+  backdrop-filter: blur(4px);
+
+  &.rating {
+    background: rgba($accent, 0.2);
+    color: $accent;
+  }
+
+  &.metacritic {
+    background: rgba(#6c5ce7, 0.2);
+    color: #a29bfe;
+  }
+}
+
+// === BOTÓN VOLVER ===
+.btn-back {
+  display: inline-block;
+  color: $text-muted;
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  transition: color $transition;
+
+  &:hover {
+    color: $accent;
+  }
+}
+
+// === BODY LAYOUT ===
+.detail__body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// === SIDEBAR ===
+.detail__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// === BLOQUES DE INFO ===
+.info-block {
+  background: $bg-card;
+  border-radius: $radius;
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $accent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.8rem;
+  }
+}
+
+// === TAGS ===
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: $text-muted;
+
+  &.genre {
+    background: rgba($accent, 0.1);
+    color: $accent;
+  }
+}
+
+// === LINK EXTERNO ===
+.external-link {
+  color: $accent;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color $transition;
+
+  &:hover {
+    color: $accent-hover;
+  }
+}
+
+// === DESCRIPCIÓN ===
+.description {
+  color: $text-muted;
+  font-size: 0.92rem;
+  line-height: 1.7;
+
+  p {
+    margin-bottom: 0.8rem;
+  }
+
+  a {
+    color: $accent;
+  }
+}
+
+// === CAPTURAS ===
+.screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.screenshot {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all $transition;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: scale(1.02);
+    border-color: rgba($accent, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// === CONTENIDO PRINCIPAL ===
+.detail__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// === ERROR STATE ===
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+  color: $text-muted;
+}

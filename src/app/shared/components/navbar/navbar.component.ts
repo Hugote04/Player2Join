@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/services/auth.service';
     <nav class="navbar">
       <!-- Logo -->
       <a routerLink="/home" class="navbar__logo">
-        <span class="logo-icon">🎮</span>
+        <img class="logo-img" src="logo_p2j.png" alt="Player2Join" />
         <span>Player<span class="logo-highlight">2</span>Join</span>
       </a>
 

@@ -1,16 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>P2j</title>
+  <title>Player2Join</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" href="logo_p2j.png" >
 </head>
 <body>
-  <app-root>
-    <app-navbar></app-navbar>
-    <router-outlet></router-outlet>
-  </app-root>
+  <!-- Splash Screen -->
+  <div id="splash" class="splash">
+    <img class="splash__logo" src="logo_entero.png" alt="Player2Join" />
+    <div class="splash__bar"><span></span></div>
+  </div>
+
+  <app-root></app-root>
+
+  <script>
+    // Oculta el splash con animación cuando Angular termine de cargar
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var splash = document.getElementById('splash');
+        if (splash) {
+          splash.classList.add('splash--hidden');
+          setTimeout(function() { splash.remove(); }, 800);
+        }
+      }, 1800);
+    });
+  </script>
 </body>
 </html>

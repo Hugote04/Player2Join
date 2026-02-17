@@ -76,12 +76,18 @@ export class AuthService {
 
   /**
    * Inicia sesión con email y contraseña.
+   * Actualiza el signal del usuario inmediatamente para evitar
+   * race-conditions con los guards de ruta.
    * @param email - Correo del usuario
    * @param pass  - Contraseña
    * @returns Credencial de Firebase
    */
-  login(email: string, pass: string) {
-    return signInWithEmailAndPassword(this.auth, email, pass);
+  async login(email: string, pass: string) {
+    const cred = await signInWithEmailAndPassword(this.auth, email, pass);
+    // Actualizar signal inmediatamente para que authGuard lo vea
+    this.currentUserSig.set(cred.user);
+    this.roleSig.set(this.resolveRole(cred.user.email));
+    return cred;
   }
 
   /**
@@ -116,7 +122,7 @@ export class AuthService {
   private resolveRole(email: string | null): 'admin' | 'user' {
     const adminEmails = [
       'admin@player2join.com',
-      'marinohugo07@gmail.comsiguiente tarea'
+      'marinohugo07@gmail.com'
     ];
     return email && adminEmails.includes(email) ? 'admin' : 'user';
   }

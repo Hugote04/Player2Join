@@ -290,8 +290,31 @@ $transition: 0.3s ease;
 }
 
 // === ADMIN: BOTÓN OCULTAR ===
+.custom-actions {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn-admin-edit {
+  flex: 1;
+  padding: 0.45rem;
+  border: none;
+  background: transparent;
+  color: $text-muted;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all $transition;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+  &:hover {
+    background: rgba(#3498db, 0.1);
+    color: #3498db;
+  }
+}
+
 .btn-admin-hide {
   display: block;
+  flex: 1;
   width: 100%;
   padding: 0.45rem;
   border: none;
@@ -305,5 +328,170 @@ $transition: 0.3s ease;
   &:hover {
     background: rgba(#ff4757, 0.1);
     color: #ff4757;
+  }
+}
+
+.custom-actions .btn-admin-hide {
+  border-top: none;
+}
+
+// === BOTÓN AÑADIR JUEGO ===
+.btn-add-game {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.65rem 1.6rem;
+  background: linear-gradient(135deg, $accent, #8e44ad);
+  color: #fff;
+  border: none;
+  border-radius: $radius;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($accent, 0.4);
+  }
+}
+
+// === SECCIÓN LABEL ===
+.section-label {
+  color: $text-primary;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+}
+
+// === BADGE CUSTOM ===
+.card-custom-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(#8e44ad, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.3px;
+}
+
+.custom-card {
+  border: 1px solid rgba(#8e44ad, 0.3);
+}
+
+// === MODAL AÑADIR JUEGO ===
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  background: $bg-card;
+  border-radius: 14px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid rgba($accent, 0.2);
+
+  h2 {
+    color: $text-primary;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    color: $text-muted;
+    font-size: 0.82rem;
+    margin-bottom: 0.3rem;
+    margin-top: 0.8rem;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: $text-primary;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color $transition;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $accent;
+    }
+
+    &::placeholder {
+      color: rgba($text-muted, 0.5);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    font-family: inherit;
+  }
+}
+
+.modal-error {
+  color: #ff4757;
+  font-size: 0.82rem;
+  margin-top: 0.6rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+
+  .btn-cancel, .btn-save {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all $transition;
+  }
+
+  .btn-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    color: $text-muted;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: $text-primary;
+    }
+  }
+
+  .btn-save {
+    background: $accent;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: $accent-hover;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }

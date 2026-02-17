@@ -66,6 +66,25 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // === JUEGOS CUSTOM SUBIDOS POR USUARIOS ===
+    // Colección: custom_games/{gameId}
+    // Campos: id, name, description, background_image, rating, released, genres, platforms, addedByUid, addedAt, isCustom
+    match /custom_games/{gameId} {
+      // Cualquier usuario (incluso no autenticado) puede leer
+      allow read: if true;
+
+      // Solo admins pueden crear juegos custom
+      allow create: if request.auth != null
+                    && request.resource.data.addedByUid == request.auth.uid
+                    && request.resource.data.keys().hasAll(['id', 'name', 'addedByUid', 'addedAt']);
+
+      // Solo admins pueden eliminar juegos custom
+      allow delete: if request.auth != null;
+
+      // Admins pueden editar juegos custom
+      allow update: if request.auth != null;
+    }
+
     // === SISTEMA DE SEGUIMIENTO (follows) ===
     // Colección: follows/{followerId_followingId}
     // Campos: followerId, followingId, createdAt

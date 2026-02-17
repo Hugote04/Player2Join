@@ -172,20 +172,30 @@ export class GameDetailComponent implements OnInit {
     // Cargar colección del usuario para saber si ya está guardado
     this.collectionService.loadUserCollection();
 
-    // Cargar detalle del juego (el interceptor añade la API key — Check 33)
-    this.gameService.getGameById(id).subscribe({
-      next: (data: any) => {
-        this.game.set(data);
+    // Detectar si es un juego custom (guardado en Firestore)
+    if (id.startsWith('custom_')) {
+      this.gameService.getCustomGameById(id).then(custom => {
+        if (custom) {
+          this.game.set(custom);
+        }
         this.loading.set(false);
-      },
-      error: () => this.loading.set(false)
-    });
+      });
+    } else {
+      // Cargar detalle del juego de RAWG (el interceptor añade la API key — Check 33)
+      this.gameService.getGameById(id).subscribe({
+        next: (data: any) => {
+          this.game.set(data);
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false)
+      });
 
-    // Cargar capturas de pantalla
-    this.gameService.getGameScreenshots(id).subscribe({
-      next: (data: any) => this.screenshots.set(data.results ?? []),
-      error: () => {}
-    });
+      // Cargar capturas de pantalla
+      this.gameService.getGameScreenshots(id).subscribe({
+        next: (data: any) => this.screenshots.set(data.results ?? []),
+        error: () => {}
+      });
+    }
   }
 
   /** Añadir o quitar de la colección */

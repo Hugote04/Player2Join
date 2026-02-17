@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { GameService } from '../../../core/services/game.service';
+import { GameService, CustomGame } from '../../../core/services/game.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
@@ -27,6 +27,11 @@ import { SlicePipe } from '@angular/common';
           />
           <button class="btn-search" (click)="onSearch()">Buscar</button>
         </div>
+
+        <!-- Botón añadir juego (solo admins) -->
+        @if (isAdmin()) {
+          <button class="btn-add-game" (click)="showAddModal.set(true)">➕ Añadir juego al catálogo</button>
+        }
       </div>
 
       <!-- Loader (Check 29) -->
@@ -35,6 +40,47 @@ import { SlicePipe } from '@angular/common';
           <div class="spinner"></div>
           <p>Cargando juegos...</p>
         </div>
+      }
+
+      <!-- Juegos custom del usuario en página 1 -->
+      @if (!loading() && currentPage() === 1 && customGamesFiltered().length > 0) {
+        <h2 class="section-label">🧩 Juegos añadidos por la comunidad</h2>
+        <div class="games-grid">
+          @for (game of customGamesFiltered(); track game.id) {
+            <div class="game-card-wrapper custom-card">
+              <a [routerLink]="['/game', game.id]" class="game-card">
+                <div class="game-card__image">
+                  @if (game.background_image) {
+                    <img [src]="game.background_image" [alt]="game.name" loading="lazy" />
+                  } @else {
+                    <div class="no-image">Sin imagen</div>
+                  }
+                  <div class="game-card__rating">
+                    <span>⭐ {{ game.rating }}</span>
+                  </div>
+                  <span class="card-custom-badge">🧩 Custom</span>
+                </div>
+                <div class="game-card__info">
+                  <h3 class="game-card__name">{{ game.name }}</h3>
+                  <div class="game-card__meta">
+                    <span class="meta-tag">{{ game.released | slice:0:4 }}</span>
+                    @for (genre of game.genres?.slice(0, 2); track genre.name) {
+                      <span class="meta-tag genre">{{ genre.name }}</span>
+                    }
+                  </div>
+                </div>
+              </a>
+              <!-- Admin: editar / eliminar juego custom -->
+              @if (isAdmin()) {
+                <div class="custom-actions">
+                  <button class="btn-admin-edit" (click)="openEditModal($event, game)">✏️ Editar</button>
+                  <button class="btn-admin-hide" (click)="deleteCustomGame($event, game)">🗑️ Eliminar</button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <h2 class="section-label" style="margin-top: 2rem;">🌐 Juegos de RAWG</h2>
       }
 
       <!-- Grid de Cards -->
@@ -101,12 +147,100 @@ import { SlicePipe } from '@angular/common';
       }
 
       <!-- Sin resultados -->
-      @if (!loading() && games().length === 0) {
+      @if (!loading() && games().length === 0 && customGamesFiltered().length === 0) {
         <div class="no-results">
           <p>No se encontraron juegos. Intenta otra búsqueda.</p>
         </div>
       }
     </section>
+
+    <!-- ===== MODAL: Añadir juego ===== -->
+    @if (showAddModal()) {
+      <div class="modal-overlay" (click)="showAddModal.set(false)">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+          <h2>➕ Añadir juego al catálogo</h2>
+
+          <label>Nombre del juego *</label>
+          <input type="text" [(ngModel)]="newGame.name" placeholder="Ej: Mi juego indie" />
+
+          <label>Descripción</label>
+          <textarea [(ngModel)]="newGame.description" rows="3" placeholder="Descripción del juego..."></textarea>
+
+          <label>URL de la imagen</label>
+          <input type="text" [(ngModel)]="newGame.background_image" placeholder="https://..." />
+
+          <label>Fecha de lanzamiento</label>
+          <input type="date" [(ngModel)]="newGame.released" />
+
+          <label>Valoración (0-5)</label>
+          <input type="number" [(ngModel)]="newGame.rating" min="0" max="5" step="0.1" />
+
+          <label>Géneros (separados por coma)</label>
+          <input type="text" [(ngModel)]="newGame.genresRaw" placeholder="Acción, RPG, Aventura" />
+
+          <label>Plataformas (separadas por coma)</label>
+          <input type="text" [(ngModel)]="newGame.platformsRaw" placeholder="PC, PlayStation, Xbox" />
+
+          <label>URL del juego (web, tienda, descarga...)</label>
+          <input type="text" [(ngModel)]="newGame.website" placeholder="https://store.steampowered.com/..." />
+
+          @if (addError()) {
+            <p class="modal-error">{{ addError() }}</p>
+          }
+
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="showAddModal.set(false)">Cancelar</button>
+            <button class="btn-save" (click)="submitCustomGame()" [disabled]="addingGame()">
+              {{ addingGame() ? '⏳ Guardando...' : '💾 Guardar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ===== MODAL: Editar juego custom ===== -->
+    @if (showEditModal()) {
+      <div class="modal-overlay" (click)="showEditModal.set(false)">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+          <h2>✏️ Editar juego</h2>
+
+          <label>Nombre del juego *</label>
+          <input type="text" [(ngModel)]="editGame.name" />
+
+          <label>Descripción</label>
+          <textarea [(ngModel)]="editGame.description" rows="3"></textarea>
+
+          <label>URL de la imagen</label>
+          <input type="text" [(ngModel)]="editGame.background_image" />
+
+          <label>Fecha de lanzamiento</label>
+          <input type="date" [(ngModel)]="editGame.released" />
+
+          <label>Valoración (0-5)</label>
+          <input type="number" [(ngModel)]="editGame.rating" min="0" max="5" step="0.1" />
+
+          <label>Géneros (separados por coma)</label>
+          <input type="text" [(ngModel)]="editGame.genresRaw" />
+
+          <label>Plataformas (separadas por coma)</label>
+          <input type="text" [(ngModel)]="editGame.platformsRaw" />
+
+          <label>URL del juego (web, tienda, descarga...)</label>
+          <input type="text" [(ngModel)]="editGame.website" />
+
+          @if (editError()) {
+            <p class="modal-error">{{ editError() }}</p>
+          }
+
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="showEditModal.set(false)">Cancelar</button>
+            <button class="btn-save" (click)="submitEditGame()" [disabled]="editingGame()">
+              {{ editingGame() ? '⏳ Guardando...' : '💾 Guardar cambios' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `
 })
 export class GameListComponent implements OnInit {
@@ -128,8 +262,37 @@ export class GameListComponent implements OnInit {
   // ¿Está buscando el usuario?
   isSearching = signal(false);
 
-  // ¿Es admin?
+  // ¿Es admin? ¿Está logueado?
   isAdmin = computed(() => this.authService.isAdmin());
+  isLoggedIn = computed(() => !!this.authService.currentUserSig());
+  currentUid = computed(() => this.authService.currentUserSig()?.uid ?? '');
+
+  // ===== Custom games =====
+  showAddModal = signal(false);
+  addingGame = signal(false);
+  addError = signal<string | null>(null);
+  newGame = { name: '', description: '', background_image: '', rating: 0, released: '', genresRaw: '', platformsRaw: '', website: '' };
+
+  // ===== Editar custom game =====
+  showEditModal = signal(false);
+  editingGame = signal(false);
+  editError = signal<string | null>(null);
+  editGameId = '';
+  editGame = { name: '', description: '', background_image: '', rating: 0, released: '', genresRaw: '', platformsRaw: '', website: '' };
+
+  /** Custom games filtrados (búsqueda + ocultos) */
+  customGamesFiltered = computed(() => {
+    const all = this.gameService.customGamesSig();
+    const query = this.searchQuery.trim().toLowerCase();
+    let filtered = all;
+    if (query) {
+      filtered = filtered.filter(g => g.name.toLowerCase().includes(query));
+    }
+    if (!this.authService.isAdmin()) {
+      filtered = filtered.filter(g => !this.collectionService.isHidden(g.id));
+    }
+    return filtered;
+  });
 
   ngOnInit() {
     // Cargar colección del usuario (para badges y filtrado)
@@ -138,6 +301,8 @@ export class GameListComponent implements OnInit {
     }
     // Cargar juegos ocultos del catálogo
     this.collectionService.loadHiddenGames();
+    // Cargar juegos custom
+    this.gameService.loadCustomGames();
     this.loadGames();
   }
 
@@ -213,5 +378,121 @@ export class GameListComponent implements OnInit {
     await this.collectionService.hideGameFromCatalog(game, uid);
     // Quitar de la vista local
     this.games.update(list => list.filter(g => g.id !== game.id));
+  }
+
+  /** Envía el formulario del juego custom */
+  async submitCustomGame() {
+    if (!this.newGame.name.trim()) {
+      this.addError.set('El nombre del juego es obligatorio.');
+      return;
+    }
+    const uid = this.authService.currentUserSig()?.uid;
+    if (!uid) return;
+
+    this.addingGame.set(true);
+    this.addError.set(null);
+
+    try {
+      const genres = this.newGame.genresRaw
+        .split(',')
+        .map(g => g.trim())
+        .filter(g => g)
+        .map((name, i) => ({ id: i + 1, name }));
+
+      const platforms = this.newGame.platformsRaw
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p)
+        .map((name, i) => ({ platform: { id: i + 1, name, slug: name.toLowerCase().replace(/\s+/g, '') } }));
+
+      await this.gameService.addCustomGame({
+        name: this.newGame.name.trim(),
+        description: this.newGame.description.trim(),
+        background_image: this.newGame.background_image.trim(),
+        rating: Math.min(5, Math.max(0, this.newGame.rating || 0)),
+        released: this.newGame.released || new Date().toISOString().slice(0, 10),
+        genres,
+        platforms,
+        website: this.newGame.website.trim() || undefined,
+        addedByUid: uid,
+      });
+
+      // Reset form y cerrar modal
+      this.newGame = { name: '', description: '', background_image: '', rating: 0, released: '', genresRaw: '', platformsRaw: '', website: '' };
+      this.showAddModal.set(false);
+    } catch (err) {
+      this.addError.set('Error al guardar el juego. Inténtalo de nuevo.');
+    } finally {
+      this.addingGame.set(false);
+    }
+  }
+
+  /** Abre el modal de edición con los datos del juego */
+  openEditModal(event: Event, game: CustomGame) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.editGameId = game.id;
+    this.editGame = {
+      name: game.name,
+      description: game.description ?? '',
+      background_image: game.background_image ?? '',
+      rating: game.rating ?? 0,
+      released: game.released ?? '',
+      genresRaw: game.genres?.map(g => g.name).join(', ') ?? '',
+      platformsRaw: game.platforms?.map(p => p.platform.name).join(', ') ?? '',
+      website: game.website ?? '',
+    };
+    this.editError.set(null);
+    this.showEditModal.set(true);
+  }
+
+  /** Envía los cambios del juego editado */
+  async submitEditGame() {
+    if (!this.editGame.name.trim()) {
+      this.editError.set('El nombre es obligatorio.');
+      return;
+    }
+    this.editingGame.set(true);
+    this.editError.set(null);
+
+    try {
+      const genres = this.editGame.genresRaw
+        .split(',')
+        .map(g => g.trim())
+        .filter(g => g)
+        .map((name, i) => ({ id: i + 1, name }));
+
+      const platforms = this.editGame.platformsRaw
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p)
+        .map((name, i) => ({ platform: { id: i + 1, name, slug: name.toLowerCase().replace(/\s+/g, '') } }));
+
+      await this.gameService.updateCustomGame(this.editGameId, {
+        name: this.editGame.name.trim(),
+        description: this.editGame.description.trim(),
+        background_image: this.editGame.background_image.trim(),
+        rating: Math.min(5, Math.max(0, this.editGame.rating || 0)),
+        released: this.editGame.released || new Date().toISOString().slice(0, 10),
+        genres,
+        platforms,
+        website: this.editGame.website.trim() || undefined,
+      });
+
+      this.showEditModal.set(false);
+    } catch {
+      this.editError.set('Error al guardar los cambios.');
+    } finally {
+      this.editingGame.set(false);
+    }
+  }
+
+  /** Eliminar un juego custom del catálogo */
+  async deleteCustomGame(event: Event, game: CustomGame) {
+    event.preventDefault();
+    event.stopPropagation();
+    const ok = confirm(`¿Eliminar "${game.name}" del catálogo?`);
+    if (!ok) return;
+    await this.gameService.deleteCustomGame(game.id);
   }
 }

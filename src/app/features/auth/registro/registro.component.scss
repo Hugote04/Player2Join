@@ -1,0 +1,146 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$bg-input: #16213e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$error-color: #ff4757;
+$radius: 8px;
+$transition: 0.25s ease;
+
+// === WRAPPER ===
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+}
+
+// === CARD ===
+.auth-card {
+  background: $bg-card;
+  border: 1px solid rgba($accent, 0.2);
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.auth-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $text-primary;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.9rem;
+  margin-bottom: 1.8rem;
+}
+
+// === FORM GROUP ===
+.form-group {
+  margin-bottom: 1.2rem;
+
+  label {
+    display: block;
+    color: $text-muted;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $radius;
+    color: $text-primary;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color $transition;
+
+    &::placeholder {
+      color: rgba($text-muted, 0.6);
+    }
+
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 2px rgba($accent, 0.15);
+    }
+
+    &.invalid {
+      border-color: $error-color;
+    }
+  }
+}
+
+.field-error {
+  display: block;
+  color: $error-color;
+  font-size: 0.78rem;
+  margin-top: 0.3rem;
+}
+
+// === BUTTON ===
+.btn-submit {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.5rem;
+  background: $accent;
+  color: #fff;
+  border: none;
+  border-radius: $radius;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: $accent-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba($accent, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// === ERROR GLOBAL ===
+.global-error {
+  text-align: center;
+  color: $error-color;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  padding: 0.6rem;
+  background: rgba($error-color, 0.1);
+  border-radius: $radius;
+}
+
+// === FOOTER ===
+.auth-footer {
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.85rem;
+  margin-top: 1.5rem;
+}
+
+.link-accent {
+  color: $accent;
+  font-weight: 600;
+  transition: color $transition;
+
+  &:hover {
+    color: $accent-hover;
+  }
+}

@@ -1,0 +1,192 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$radius: 10px;
+$transition: 0.3s ease;
+
+// === DASHBOARD ===
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard__header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 0.3rem;
+  }
+
+  .subtitle {
+    color: $text-muted;
+    font-size: 0.95rem;
+
+    strong {
+      color: $accent;
+    }
+  }
+}
+
+// === LOADER ===
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1rem;
+
+  p {
+    color: $text-muted;
+  }
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// === ESTADO VACÍO ===
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 1.2rem;
+  color: $text-muted;
+  font-size: 1.05rem;
+}
+
+.btn-explore {
+  padding: 0.6rem 1.6rem;
+  border-radius: 8px;
+  background: $accent;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all $transition;
+
+  &:hover {
+    background: $accent-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba($accent, 0.35);
+  }
+}
+
+// === GRID ===
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+// === CARD ===
+.game-card {
+  background: $bg-card;
+  border-radius: $radius;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all $transition;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    border-color: rgba($accent, 0.25);
+  }
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-img {
+  position: relative;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-rating {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffc107;
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.card-body {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $text-primary;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-date {
+  font-size: 0.78rem;
+  color: $text-muted;
+}
+
+// === BOTÓN QUITAR ===
+.btn-remove {
+  display: block;
+  width: 100%;
+  padding: 0.55rem;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
+  color: $text-muted;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: rgba($accent, 0.12);
+    color: $accent;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+}

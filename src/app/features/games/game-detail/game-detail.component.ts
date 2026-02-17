@@ -1,6 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GameService } from '../../../core/services/game.service';
+import { CollectionService } from '../../../core/services/collection.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-game-detail',
@@ -30,6 +32,23 @@ import { GameService } from '../../../core/services/game.service';
                 <span class="badge metacritic">Metacritic: {{ game().metacritic }}</span>
               }
             </div>
+
+            <!-- Botón Colección (solo si está autenticado) -->
+            @if (isLoggedIn()) {
+              <button
+                class="btn-collection"
+                [class.saved]="isSaved()"
+                (click)="toggleCollection()"
+                [disabled]="toggling()">
+                @if (toggling()) {
+                  ⏳ Guardando...
+                } @else if (isSaved()) {
+                  ❌ Quitar de mi Colección
+                } @else {
+                  🎮 Añadir a mi Colección
+                }
+              </button>
+            }
           </div>
         </div>
 
@@ -127,15 +146,31 @@ import { GameService } from '../../../core/services/game.service';
 export class GameDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private gameService = inject(GameService);
+  private collectionService = inject(CollectionService);
+  private authService = inject(AuthService);
 
   // Signals (Check 34)
   game = signal<any>(null);
   screenshots = signal<any[]>([]);
   loading = signal(false);
+  toggling = signal(false);
+
+  // Computed: ¿está logueado?
+  isLoggedIn = computed(() => !!this.authService.currentUserSig());
+
+  // Computed: ¿está guardado este juego?
+  isSaved = computed(() => {
+    const g = this.game();
+    if (!g) return false;
+    return this.collectionService.isSaved(String(g.id));
+  });
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.loading.set(true);
+
+    // Cargar colección del usuario para saber si ya está guardado
+    this.collectionService.loadUserCollection();
 
     // Cargar detalle del juego (el interceptor añade la API key — Check 33)
     this.gameService.getGameById(id).subscribe({
@@ -151,5 +186,22 @@ export class GameDetailComponent implements OnInit {
       next: (data: any) => this.screenshots.set(data.results ?? []),
       error: () => {}
     });
+  }
+
+  /** Añadir o quitar de la colección */
+  async toggleCollection() {
+    const g = this.game();
+    if (!g) return;
+
+    this.toggling.set(true);
+    try {
+      if (this.collectionService.isSaved(String(g.id))) {
+        await this.collectionService.removeGame(String(g.id));
+      } else {
+        await this.collectionService.addGame(g);
+      }
+    } finally {
+      this.toggling.set(false);
+    }
   }
 }

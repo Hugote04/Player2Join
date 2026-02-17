@@ -72,6 +72,40 @@ $transition: 0.3s ease;
   gap: 0.6rem;
 }
 
+// === BOTÓN COLECCIÓN ===
+.btn-collection {
+  margin-top: 1rem;
+  align-self: flex-start;
+  padding: 0.65rem 1.4rem;
+  border: 2px solid $accent;
+  border-radius: 8px;
+  background: transparent;
+  color: $accent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+  letter-spacing: 0.3px;
+
+  &:hover:not(:disabled) {
+    background: $accent;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba($accent, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &.saved {
+    background: rgba($accent, 0.15);
+    border-color: $accent;
+    color: $accent-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+}
+
 .badge {
   padding: 0.3rem 0.7rem;
   border-radius: 6px;

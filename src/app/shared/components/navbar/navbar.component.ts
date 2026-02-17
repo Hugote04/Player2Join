@@ -1,26 +1,44 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive],
+  styleUrl: './navbar.component.scss',
   template: `
-    <nav style="display: flex; gap: 20px; padding: 10px; background: #222; color: white;">
-      <a routerLink="/home" routerLinkActive="active">Player2Join</a>
-      
-      @if (authService.currentUserSig()) {
-        <a routerLink="/dashboard">Dashboard</a>
-        <button (click)="authService.logout()">Logout</button>
-      } @else {
-        <a routerLink="/login">Login</a>
-        <a routerLink="/registro">Registro</a>
-      }
+    <nav class="navbar">
+      <!-- Logo -->
+      <a routerLink="/home" class="navbar__logo">
+        <span class="logo-icon">🎮</span>
+        <span>Player<span class="logo-highlight">2</span>Join</span>
+      </a>
+
+      <!-- Links centrales -->
+      <div class="navbar__links">
+        <a routerLink="/home" routerLinkActive="active" class="nav-link">Catálogo</a>
+        @if (authService.currentUserSig()) {
+          <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Mi Colección</a>
+        }
+      </div>
+
+      <!-- Auth -->
+      <div class="navbar__auth">
+        @if (authService.currentUserSig(); as user) {
+          <span class="user-greeting">
+            Hola, <span class="user-email">{{ user.email }}</span>
+          </span>
+          <button class="btn-logout" (click)="authService.logout()">Logout</button>
+        } @else {
+          <a routerLink="/login" class="btn-login">Iniciar Sesión</a>
+          <a routerLink="/registro" class="btn-register">Registro</a>
+        }
+      </div>
     </nav>
   `
 })
 export class NavbarComponent {
-  public authService = inject(AuthService); // Usamos el Signal del RA8 [cite: 308]
+  // RA8 - Check 34: Inyectamos AuthService que expone currentUserSig (Signal)
+  public authService = inject(AuthService);
 }

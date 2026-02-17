@@ -1,0 +1,148 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$font-gaming: 'Segoe UI', 'Roboto', sans-serif;
+$transition-fast: 0.25s ease;
+
+// === NAVBAR ===
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background: $bg-dark;
+  border-bottom: 2px solid $accent;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: $font-gaming;
+}
+
+// --- Logo ---
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: $text-primary;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: color $transition-fast;
+
+  .logo-icon {
+    font-size: 1.6rem;
+  }
+
+  .logo-highlight {
+    color: $accent;
+  }
+
+  &:hover {
+    color: $accent-hover;
+  }
+}
+
+// --- Links de navegación ---
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: $text-muted;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.4rem 0;
+  border-bottom: 2px solid transparent;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+    border-bottom-color: $accent;
+  }
+
+  &.active {
+    color: $accent;
+    border-bottom-color: $accent;
+  }
+}
+
+// --- Botones de autenticación ---
+.navbar__auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-login {
+  background: transparent;
+  color: $text-primary;
+  border: 1px solid $text-muted;
+  padding: 0.45rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-decoration: none;
+
+  &:hover {
+    border-color: $accent;
+    color: $accent;
+  }
+}
+
+.btn-register {
+  background: $accent;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.3rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-decoration: none;
+
+  &:hover {
+    background: $accent-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba($accent, 0.4);
+  }
+}
+
+.btn-logout {
+  background: transparent;
+  color: $text-muted;
+  border: 1px solid $text-muted;
+  padding: 0.45rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $accent;
+    color: $accent;
+  }
+}
+
+// --- Usuario logueado ---
+.user-greeting {
+  color: $text-muted;
+  font-size: 0.85rem;
+
+  .user-email {
+    color: $accent;
+    font-weight: 600;
+  }
+}

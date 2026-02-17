@@ -24,6 +24,12 @@ export const routes: Routes = [
     canActivate: [authGuard] 
   },
 
+  // Detalle de juego (Check 32)
+  {
+    path: 'game/:id',
+    loadComponent: () => import('./features/games/game-detail/game-detail.component').then(m => m.GameDetailComponent)
+  },
+
   // Error (Check 11 / 28)
   { 
     path: '**', 

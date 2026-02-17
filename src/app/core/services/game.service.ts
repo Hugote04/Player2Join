@@ -7,19 +7,31 @@ import { Observable } from 'rxjs';
 })
 export class GameService {
   private http = inject(HttpClient);
-  // URL base para obtener juegos de RAWG
+  // URL base — el interceptor rawgInterceptor añade la API key automáticamente (Check 33)
   private apiUrl = 'https://api.rawg.io/api/games';
 
-  // Check 34: Usamos Signals para el estado reactivo
+  // Check 34: Signal para estado reactivo
   gamesSig = signal<any[]>([]);
 
-  // Check 32: Operación de lectura (Read) de la lista de juegos
+  // Check 12: Obtener lista de juegos populares
   getGames(): Observable<any> {
     return this.http.get<any>(this.apiUrl);
   }
 
-  // Check 32: Operación de lectura (Read) del detalle de un juego
+  // Check 12: Buscar juegos por nombre
+  searchGames(query: string): Observable<any> {
+    return this.http.get<any>(this.apiUrl, {
+      params: { search: query }
+    });
+  }
+
+  // Check 32: Detalle de un juego
   getGameById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  // Capturas de pantalla de un juego
+  getGameScreenshots(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/screenshots`);
   }
 }

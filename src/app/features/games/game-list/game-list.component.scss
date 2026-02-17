@@ -1,0 +1,226 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$bg-input: #16213e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$radius: 10px;
+$transition: 0.3s ease;
+
+// === CATALOG HEADER ===
+.catalog {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.catalog__header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.catalog__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 0.3rem;
+}
+
+.catalog__subtitle {
+  color: $text-muted;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+// === SEARCH BAR ===
+.search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+
+  input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $radius;
+    color: $text-primary;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color $transition;
+
+    &::placeholder {
+      color: rgba($text-muted, 0.6);
+    }
+
+    &:focus {
+      border-color: $accent;
+    }
+  }
+}
+
+.btn-search {
+  padding: 0.7rem 1.5rem;
+  background: $accent;
+  color: #fff;
+  border: none;
+  border-radius: $radius;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover {
+    background: $accent-hover;
+  }
+}
+
+// === LOADER (Check 29) ===
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+
+  p {
+    color: $text-muted;
+    font-size: 0.95rem;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// === GRID DE CARDS ===
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+// === GAME CARD ===
+.game-card {
+  background: $bg-card;
+  border-radius: $radius;
+  overflow: hidden;
+  text-decoration: none;
+  color: $text-primary;
+  transition: all $transition;
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($accent, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba($accent, 0.15);
+  }
+}
+
+.game-card__image {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition;
+  }
+
+  .game-card:hover & img {
+    transform: scale(1.05);
+  }
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-input;
+  color: $text-muted;
+  font-size: 0.85rem;
+}
+
+.game-card__rating {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.game-card__info {
+  padding: 1rem;
+}
+
+.game-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+
+  // Truncar a 2 líneas
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.meta-tag {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: $text-muted;
+
+  &.genre {
+    color: $accent;
+    background: rgba($accent, 0.1);
+  }
+}
+
+.game-card__platforms {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.platform-icon {
+  opacity: 0.7;
+}
+
+// === SIN RESULTADOS ===
+.no-results {
+  text-align: center;
+  padding: 4rem 0;
+  color: $text-muted;
+  font-size: 1rem;
+}

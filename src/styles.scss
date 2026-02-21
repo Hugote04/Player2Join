@@ -37,6 +37,10 @@ a {
 .app-content {
   min-height: calc(100vh - 64px);
   padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0.75rem;
+  }
 }
 
 /* === Splash Screen === */

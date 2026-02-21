@@ -205,3 +205,19 @@ $admin-color: #ffc107;
     cursor: wait;
   }
 }
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+  .admin-history {
+    padding: 1rem 0.5rem;
+  }
+
+  .history__header h1 {
+    font-size: 1.4rem;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+}

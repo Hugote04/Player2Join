@@ -17,20 +17,25 @@ import { NotificationService, AppNotification } from '../../../core/services/not
         <span>Player<span class="logo-highlight">2</span>Join</span>
       </a>
 
+      <!-- Hamburger toggle (solo móvil) -->
+      <button class="navbar__burger" [class.open]="menuOpen()" (click)="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+
       <!-- Links centrales -->
-      <div class="navbar__links">
-        <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">Catálogo</a>
+      <div class="navbar__links" [class.show]="menuOpen()">
+        <a routerLink="/catalogo" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Catálogo</a>
         @if (authService.currentUserSig()) {
-          <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Mi Colección</a>
-          <a routerLink="/buscar" routerLinkActive="active" class="nav-link">Jugadores</a>
+          <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Mi Colección</a>
+          <a routerLink="/buscar" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Jugadores</a>
         }
         @if (authService.isAdmin()) {
-          <a routerLink="/admin/historial" routerLinkActive="active" class="nav-link admin-link">🛡️ Admin</a>
+          <a routerLink="/admin/historial" routerLinkActive="active" class="nav-link admin-link" (click)="closeMenu()">🛡️ Admin</a>
         }
       </div>
 
       <!-- Auth -->
-      <div class="navbar__auth">
+      <div class="navbar__auth" [class.show]="menuOpen()">
         @if (authService.currentUserSig()) {
           <!-- Campana de notificaciones -->
           <div class="notif-wrapper">
@@ -81,7 +86,7 @@ import { NotificationService, AppNotification } from '../../../core/services/not
           </div>
 
           <!-- Avatar + Nombre Gamer -->
-          <a routerLink="/perfil" class="user-profile-link">
+          <a routerLink="/perfil" class="user-profile-link" (click)="closeMenu()">
             <div class="user-avatar">
               @if (profilePhoto()) {
                 <img [src]="profilePhoto()" alt="Avatar" />
@@ -94,10 +99,10 @@ import { NotificationService, AppNotification } from '../../../core/services/not
               <span class="role-badge admin">ADMIN</span>
             }
           </a>
-          <button class="btn-logout" (click)="authService.logout()">Logout</button>
+          <button class="btn-logout" (click)="authService.logout(); closeMenu()">Logout</button>
         } @else {
-          <a routerLink="/login" class="btn-login">Iniciar Sesión</a>
-          <a routerLink="/registro" class="btn-register">Registro</a>
+          <a routerLink="/login" class="btn-login" (click)="closeMenu()">Iniciar Sesión</a>
+          <a routerLink="/registro" class="btn-register" (click)="closeMenu()">Registro</a>
         }
       </div>
     </nav>
@@ -109,6 +114,7 @@ export class NavbarComponent {
   public notificationService = inject(NotificationService);
 
   showNotifPanel = signal(false);
+  menuOpen = signal(false);
 
   // Computed signals para el nombre gamer y foto
   gamerName = computed(() => {
@@ -124,6 +130,14 @@ export class NavbarComponent {
 
   toggleNotifPanel() {
     this.showNotifPanel.update(v => !v);
+  }
+
+  toggleMenu() {
+    this.menuOpen.update(v => !v);
+  }
+
+  closeMenu() {
+    this.menuOpen.set(false);
   }
 
   async onNotifClick(notif: AppNotification) {

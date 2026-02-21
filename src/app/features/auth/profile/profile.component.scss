@@ -346,3 +346,36 @@ $transition: 0.25s ease;
     border-radius: 0 8px 8px 0 !important;
   }
 }
+
+// === RESPONSIVE ===
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .profile-card {
+    padding: 1.8rem 1.2rem;
+  }
+
+  .profile-title {
+    font-size: 1.25rem;
+  }
+
+  .avatar-preview {
+    width: 80px;
+    height: 80px;
+
+    &.large {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  .social-stats {
+    gap: 1.2rem;
+  }
+
+  .stat-number {
+    font-size: 1.2rem;
+  }
+}

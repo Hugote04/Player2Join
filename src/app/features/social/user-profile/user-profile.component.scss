@@ -369,3 +369,61 @@ $transition: 0.25s ease;
     border-color: #1d9bf0;
   }
 }
+
+// === RESPONSIVE ===
+@media (max-width: 600px) {
+  .user-profile-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .profile-hero {
+    padding: 1.2rem;
+    gap: 1rem;
+  }
+
+  .hero-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .hero-username {
+    font-size: 1.4rem;
+  }
+
+  .hero-desc {
+    font-size: 0.85rem;
+  }
+
+  .hero-stats {
+    gap: 1.2rem;
+  }
+
+  .stat-num {
+    font-size: 1.1rem;
+  }
+
+  .btn-follow {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-dm {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .card-img {
+    height: 110px;
+  }
+}

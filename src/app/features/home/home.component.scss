@@ -144,3 +144,46 @@ $transition: 0.3s ease;
     margin-bottom: 1.2rem;
   }
 }
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 0.5rem 1.5rem;
+
+    &__logo {
+      width: 80px;
+      height: 80px;
+    }
+
+    &__title {
+      font-size: 1.8rem;
+    }
+
+    &__subtitle {
+      font-size: 0.95rem;
+    }
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.65rem 1.4rem;
+    font-size: 0.9rem;
+  }
+
+  .features {
+    gap: 1rem;
+    padding: 1rem 0 2rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .cta {
+    padding: 1.5rem 1rem;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+}

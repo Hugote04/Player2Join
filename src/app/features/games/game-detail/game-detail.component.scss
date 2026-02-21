@@ -263,3 +263,48 @@ $transition: 0.3s ease;
   gap: 1rem;
   color: $text-muted;
 }
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+  .detail__hero {
+    height: 220px;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-overlay {
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-meta {
+    gap: 0.4rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .btn-collection {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+  }
+
+  .info-block {
+    padding: 1rem;
+  }
+
+  .screenshots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.7rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+}

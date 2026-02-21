@@ -529,3 +529,46 @@ $transition: 0.25s ease;
     color: $text-primary;
   }
 }
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+  .chat-page {
+    height: calc(100vh - 56px - 2rem);
+  }
+
+  .chat-header {
+    gap: 0.6rem;
+    padding: 0.75rem;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .chat-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .chat-user-info h2 {
+    font-size: 0.9rem;
+  }
+
+  .messages-container {
+    padding: 0.6rem;
+  }
+
+  .msg-bubble {
+    max-width: 85%;
+  }
+
+  .chat-input-area {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .modal-card {
+    padding: 1rem;
+    max-height: 80vh;
+  }
+
+  .games-pick-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+}

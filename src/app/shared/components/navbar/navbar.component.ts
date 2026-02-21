@@ -19,7 +19,7 @@ import { NotificationService, AppNotification } from '../../../core/services/not
 
       <!-- Links centrales -->
       <div class="navbar__links">
-        <a routerLink="/home" routerLinkActive="active" class="nav-link">Catálogo</a>
+        <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">Catálogo</a>
         @if (authService.currentUserSig()) {
           <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Mi Colección</a>
           <a routerLink="/buscar" routerLinkActive="active" class="nav-link">Jugadores</a>

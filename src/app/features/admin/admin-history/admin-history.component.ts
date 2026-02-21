@@ -25,7 +25,7 @@ import { CollectionService, HiddenGame } from '../../../core/services/collection
       @if (!loading() && games().length === 0) {
         <div class="empty">
           <p>No hay juegos ocultos en el catálogo.</p>
-          <a routerLink="/home" class="btn-back">← Volver al catálogo</a>
+          <a routerLink="/catalogo" class="btn-back">← Volver al catálogo</a>
         </div>
       }
 

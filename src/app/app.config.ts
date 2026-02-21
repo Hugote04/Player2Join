@@ -12,6 +12,7 @@ import { environment } from './environments/environments';
 // Interceptores (Requisito RA8 - Check 33)
 import { rawgInterceptor } from './core/interceptors/rawg.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
 
     // Check 33: HttpClient con interceptores (Auth JWT + RAWG API key)
-    provideHttpClient(withInterceptors([authInterceptor, rawgInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, rawgInterceptor, errorInterceptor])),
 
     // RA6: Firebase
     provideFirebaseApp(() => initializeApp(environment.firebase)),

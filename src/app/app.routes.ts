@@ -5,9 +5,13 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   // Públicas (Check 22, 23, 24)
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { 
-    path: 'home', 
-    loadComponent: () => import('./features/games/game-list/game-list.component').then(m => m.GameListComponent) 
+  {
+    path: 'home',
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+  },
+  {
+    path: 'catalogo',
+    loadComponent: () => import('./features/games/game-list/game-list.component').then(m => m.GameListComponent)
   },
   { 
     path: 'login', 

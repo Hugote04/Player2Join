@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { GameService, CustomGame } from '../../../core/services/game.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SlicePipe } from '@angular/common';
@@ -247,6 +248,7 @@ export class GameListComponent implements OnInit {
   private gameService = inject(GameService);
   private collectionService = inject(CollectionService);
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
 
   // Signals para estado reactivo (Check 34)
   games = signal<any[]>([]);
@@ -375,9 +377,14 @@ export class GameListComponent implements OnInit {
     const uid = this.authService.currentUserSig()?.uid;
     if (!uid) return;
 
-    await this.collectionService.hideGameFromCatalog(game, uid);
-    // Quitar de la vista local
-    this.games.update(list => list.filter(g => g.id !== game.id));
+    try {
+      await this.collectionService.hideGameFromCatalog(game, uid);
+      // Quitar de la vista local
+      this.games.update(list => list.filter(g => g.id !== game.id));
+      this.toast.success(`"${game.name}" ocultado del catálogo`);
+    } catch {
+      this.toast.error('Error al ocultar el juego');
+    }
   }
 
   /** Envía el formulario del juego custom */
@@ -420,8 +427,10 @@ export class GameListComponent implements OnInit {
       // Reset form y cerrar modal
       this.newGame = { name: '', description: '', background_image: '', rating: 0, released: '', genresRaw: '', platformsRaw: '', website: '' };
       this.showAddModal.set(false);
+      this.toast.success('Juego añadido al catálogo correctamente');
     } catch (err) {
       this.addError.set('Error al guardar el juego. Inténtalo de nuevo.');
+      this.toast.error('Error al añadir el juego');
     } finally {
       this.addingGame.set(false);
     }
@@ -480,8 +489,10 @@ export class GameListComponent implements OnInit {
       });
 
       this.showEditModal.set(false);
+      this.toast.success('Juego actualizado correctamente');
     } catch {
       this.editError.set('Error al guardar los cambios.');
+      this.toast.error('Error al actualizar el juego');
     } finally {
       this.editingGame.set(false);
     }
@@ -493,6 +504,11 @@ export class GameListComponent implements OnInit {
     event.stopPropagation();
     const ok = confirm(`¿Eliminar "${game.name}" del catálogo?`);
     if (!ok) return;
-    await this.gameService.deleteCustomGame(game.id);
+    try {
+      await this.gameService.deleteCustomGame(game.id);
+      this.toast.success(`"${game.name}" eliminado del catálogo`);
+    } catch {
+      this.toast.error('Error al eliminar el juego');
+    }
   }
 }

@@ -1,0 +1,146 @@
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$radius: 12px;
+$transition: 0.3s ease;
+
+.home {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+// === HERO ===
+.hero {
+  padding: 3rem 1rem 2rem;
+
+  &__logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 30px rgba($accent, 0.3));
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 0.6rem;
+
+    .accent {
+      color: $accent;
+    }
+  }
+
+  &__subtitle {
+    color: $text-muted;
+    font-size: 1.1rem;
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, $accent, #8e44ad);
+  color: #fff;
+  border-radius: $radius;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all $transition;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba($accent, 0.4);
+  }
+}
+
+.btn-secondary {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: $text-primary;
+  border-radius: $radius;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all $transition;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+// === FEATURES ===
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0 3rem;
+}
+
+.feature-card {
+  background: $bg-card;
+  border-radius: $radius;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all $transition;
+
+  &:hover {
+    border-color: rgba($accent, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .feature-icon {
+    font-size: 2.2rem;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+
+  h3 {
+    color: $text-primary;
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+}
+
+// === CTA ===
+.cta {
+  padding: 2.5rem 1.5rem;
+  background: $bg-card;
+  border-radius: $radius;
+  border: 1px solid rgba($accent, 0.15);
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $text-muted;
+    margin-bottom: 1.2rem;
+  }
+}

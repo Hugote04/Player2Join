@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GameService } from '../../../core/services/game.service';
 import { CollectionService } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-game-detail',
@@ -23,7 +24,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <!-- Hero Banner -->
         <div class="detail__hero" [style.backgroundImage]="'url(' + game().background_image + ')'">
           <div class="hero-overlay">
-            <a routerLink="/home" class="btn-back">← Volver al catálogo</a>
+            <a routerLink="/catalogo" class="btn-back">← Volver al catálogo</a>
             <h1 class="hero-title">{{ game().name }}</h1>
             <div class="hero-meta">
               <span class="badge rating">⭐ {{ game().rating }} / 5</span>
@@ -138,7 +139,7 @@ import { AuthService } from '../../../core/services/auth.service';
     @if (!loading() && !game()) {
       <div class="error-state">
         <p>No se pudo cargar el juego.</p>
-        <a routerLink="/home" class="btn-back">← Volver al catálogo</a>
+        <a routerLink="/catalogo" class="btn-back">← Volver al catálogo</a>
       </div>
     }
   `
@@ -148,6 +149,7 @@ export class GameDetailComponent implements OnInit {
   private gameService = inject(GameService);
   private collectionService = inject(CollectionService);
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
 
   // Signals (Check 34)
   game = signal<any>(null);
@@ -207,9 +209,13 @@ export class GameDetailComponent implements OnInit {
     try {
       if (this.collectionService.isSaved(String(g.id))) {
         await this.collectionService.removeGame(String(g.id));
+        this.toast.success(`"${g.name}" eliminado de tu colección`);
       } else {
         await this.collectionService.addGame(g);
+        this.toast.success(`"${g.name}" añadido a tu colección`);
       }
+    } catch {
+      this.toast.error('Error al actualizar la colección');
     } finally {
       this.toggling.set(false);
     }

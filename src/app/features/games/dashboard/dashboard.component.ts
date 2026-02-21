@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CollectionService, SavedGame } from '../../../core/services/collection.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProfileService } from '../../../core/services/profile.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +34,7 @@ import { ProfileService } from '../../../core/services/profile.service';
       @if (!loading() && games().length === 0) {
         <div class="empty">
           <p>Aún no has guardado ningún juego.</p>
-          <a routerLink="/home" class="btn-explore">Explorar catálogo →</a>
+          <a routerLink="/catalogo" class="btn-explore">Explorar catálogo →</a>
         </div>
       }
 
@@ -108,6 +109,7 @@ export class DashboardComponent implements OnInit {
   private collectionService = inject(CollectionService);
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
+  private toast = inject(ToastService);
 
   // Signals (Check 34)
   games = signal<SavedGame[]>([]);
@@ -180,9 +182,11 @@ export class DashboardComponent implements OnInit {
         list.map(g => g.id === game.id ? { ...g, ...data } : g)
       );
       this.editMsg.set('✅ Guardado correctamente');
+      this.toast.success('Cambios guardados correctamente');
       setTimeout(() => this.closeEdit(), 800);
     } catch {
       this.editMsg.set('❌ Error al guardar');
+      this.toast.error('Error al guardar los cambios');
     } finally {
       this.saving.set(false);
     }
@@ -197,6 +201,9 @@ export class DashboardComponent implements OnInit {
     try {
       await this.collectionService.removeGame(game.id);
       this.games.update(list => list.filter(g => g.id !== game.id));
+      this.toast.success(`"${game.name}" eliminado de tu colección`);
+    } catch {
+      this.toast.error('Error al eliminar el juego');
     } finally {
       this.removing.set(false);
     }

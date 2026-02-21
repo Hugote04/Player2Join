@@ -330,3 +330,42 @@ $transition: 0.25s ease;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+// === TWITTER LINK ===
+.twitter-link {
+  display: inline-block;
+  color: #1d9bf0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.25s ease;
+
+  &:hover {
+    color: #4db5f9;
+    text-decoration: underline;
+  }
+}
+
+// === DM BUTTON ===
+.btn-dm {
+  display: inline-block;
+  padding: 0.55rem 1.4rem;
+  background: rgba(29, 155, 240, 0.15);
+  border: 1px solid rgba(29, 155, 240, 0.3);
+  border-radius: 8px;
+  color: #1d9bf0;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #1d9bf0;
+    color: #fff;
+    border-color: #1d9bf0;
+  }
+}

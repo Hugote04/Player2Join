@@ -58,6 +58,18 @@ export const routes: Routes = [
     data: { mode: 'following' }
   },
 
+  // Mensajes privados
+  {
+    path: 'mensajes',
+    loadComponent: () => import('./features/social/conversations/conversations.component').then(m => m.ConversationsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'chat/:uid',
+    loadComponent: () => import('./features/social/chat/chat.component').then(m => m.ChatComponent),
+    canActivate: [authGuard]
+  },
+
   // Detalle de juego (Check 32)
   {
     path: 'game/:id',

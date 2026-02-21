@@ -1,0 +1,531 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$bg-input: #16213e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text-primary: #eaeaea;
+$text-muted: #888;
+$radius: 8px;
+$transition: 0.25s ease;
+
+// === PAGE LAYOUT ===
+.chat-page {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px - 4rem);
+}
+
+// === HEADER ===
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: $bg-card;
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid rgba($accent, 0.15);
+  flex-shrink: 0;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: $text-primary;
+  text-decoration: none;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all $transition;
+
+  &:hover {
+    border-color: $accent;
+    color: $accent;
+    background: rgba($accent, 0.1);
+  }
+}
+
+.btn-back-link {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  background: rgba($accent, 0.15);
+  border: 1px solid rgba($accent, 0.3);
+  border-radius: $radius;
+  color: $accent;
+  text-decoration: none;
+  transition: all $transition;
+
+  &:hover {
+    background: $accent;
+    color: #fff;
+  }
+}
+
+.chat-user-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  color: $text-primary;
+  transition: opacity $transition;
+
+  &:hover { opacity: 0.85; }
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba($accent, 0.3);
+  background: $bg-input;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-fallback { color: $accent; font-weight: 700; font-size: 1rem; }
+}
+
+.chat-user-info {
+  h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+}
+
+.twitter-tag {
+  font-size: 0.72rem;
+  color: #1d9bf0;
+}
+
+// === MUTUAL WARNING ===
+.mutual-warning {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(#ffc107, 0.08);
+  border: 1px solid rgba(#ffc107, 0.25);
+  border-radius: 10px;
+  margin: 1rem;
+  flex-shrink: 0;
+
+  p {
+    color: $text-primary;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.btn-follow-link {
+  color: $accent;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+
+  &:hover { color: $accent-hover; }
+}
+
+// === MESSAGES CONTAINER ===
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: rgba($bg-dark, 0.6);
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+}
+
+.empty-chat {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-muted;
+  font-size: 0.95rem;
+}
+
+// === MESSAGES ===
+.message {
+  display: flex;
+
+  &.sent { justify-content: flex-end; }
+  &.received { justify-content: flex-start; }
+}
+
+.msg-bubble {
+  max-width: 75%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+  position: relative;
+
+  .sent & {
+    background: $accent;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .received & {
+    background: $bg-card;
+    color: $text-primary;
+    border-bottom-left-radius: 4px;
+  }
+}
+
+.msg-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.msg-image {
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: 10px;
+  display: block;
+  object-fit: contain;
+}
+
+.msg-game-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all $transition;
+  min-width: 180px;
+
+  &:hover { transform: scale(1.02); }
+}
+
+.msg-game-img {
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.msg-game-rating {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.msg-game-name {
+  display: block;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.msg-time {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.6;
+  margin-top: 0.2rem;
+  text-align: right;
+}
+
+// === INPUT AREA ===
+.chat-input-area {
+  padding: 0.8rem 1rem;
+  background: $bg-card;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+}
+
+.input-toolbar {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.btn-attach {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  transition: background $transition;
+
+  &:hover { background: rgba(255, 255, 255, 0.08); }
+}
+
+.attach-menu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  background: $bg-card;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  min-width: 220px;
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    background: transparent;
+    border: none;
+    color: $text-primary;
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background $transition;
+
+    &:hover { background: rgba($accent, 0.15); }
+    & + button { border-top: 1px solid rgba(255, 255, 255, 0.06); }
+  }
+}
+
+// === URL / FILE BARS ===
+.url-bar,
+.file-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  input[type="url"] {
+    flex: 1;
+    padding: 0.5rem 0.8rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: $radius;
+    color: $text-primary;
+    font-size: 0.85rem;
+    outline: none;
+
+    &:focus { border-color: $accent; }
+    &::placeholder { color: rgba($text-muted, 0.5); }
+  }
+}
+
+.file-hidden { display: none; }
+
+.btn-send-img,
+.btn-pick-file {
+  padding: 0.5rem 1rem;
+  background: rgba($accent, 0.15);
+  border: 1px solid rgba($accent, 0.3);
+  border-radius: $radius;
+  color: $accent;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all $transition;
+
+  &:hover { background: $accent; color: #fff; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-close-bar {
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover { color: $text-primary; border-color: $accent; }
+}
+
+.file-preview {
+  margin-bottom: 0.5rem;
+  text-align: center;
+
+  img {
+    max-height: 120px;
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// === TEXT INPUT ===
+.text-bar {
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: $text-primary;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color $transition;
+
+    &::placeholder { color: rgba($text-muted, 0.6); }
+    &:focus { border-color: $accent; }
+    &:disabled { opacity: 0.5; }
+  }
+}
+
+.btn-send {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: $accent;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all $transition;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) { background: $accent-hover; transform: scale(1.05); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// === LOADER ===
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1rem;
+  p { color: $text-muted; }
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1rem;
+  color: $text-muted;
+}
+
+// === MODAL ===
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.modal-card {
+  background: $bg-card;
+  border: 1px solid rgba($accent, 0.3);
+  border-radius: 14px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+
+  h3 {
+    color: $text-primary;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+}
+
+.modal-empty {
+  text-align: center;
+  color: $text-muted;
+  padding: 2rem;
+}
+
+.games-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.game-pick-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition;
+  text-align: left;
+  padding: 0;
+  color: $text-primary;
+
+  &:hover {
+    border-color: rgba($accent, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pick-img {
+  height: 80px;
+  background-size: cover;
+  background-position: center;
+}
+
+.pick-name {
+  display: block;
+  padding: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-modal-close {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all $transition;
+  text-align: center;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: $text-primary;
+  }
+}

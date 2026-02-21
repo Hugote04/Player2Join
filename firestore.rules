@@ -127,6 +127,42 @@ service cloud.firestore {
                     && resource.data.toUid == request.auth.uid;
     }
 
+    // === MENSAJERÍA PRIVADA (Conversaciones) ===
+    // Colección: conversations/{convoId}
+    // Campos: id, participants[], lastMessage, lastMessageAt, lastMessageType, lastSenderId
+    match /conversations/{convoId} {
+      // Solo participantes pueden leer la conversación
+      allow read: if request.auth != null
+                  && request.auth.uid in resource.data.participants;
+
+      // Cualquier usuario autenticado puede crear una conversación (será participante)
+      allow create: if request.auth != null
+                    && request.auth.uid in request.resource.data.participants
+                    && request.resource.data.keys().hasAll(['id', 'participants', 'lastMessage', 'lastMessageAt']);
+
+      // Solo participantes pueden actualizar (enviar mensaje actualiza metadatos)
+      allow update: if request.auth != null
+                    && request.auth.uid in resource.data.participants;
+
+      allow delete: if false;
+
+      // Subcolección: messages/{msgId}
+      // Campos: id, conversationId, senderId, type, content, createdAt, gameData?
+      match /messages/{msgId} {
+        // Solo participantes de la conversación pueden leer mensajes
+        allow read: if request.auth != null
+                    && request.auth.uid in get(/databases/$(database)/documents/conversations/$(convoId)).data.participants;
+
+        // Solo participantes pueden crear mensajes y el senderId debe coincidir
+        allow create: if request.auth != null
+                      && request.auth.uid in get(/databases/$(database)/documents/conversations/$(convoId)).data.participants
+                      && request.resource.data.senderId == request.auth.uid;
+
+        // Los mensajes no se editan ni borran
+        allow update, delete: if false;
+      }
+    }
+
     // Denegar todo lo demás
     match /{document=**} {
       allow read, write: if false;

@@ -59,7 +59,7 @@ La configuración se encuentra en `src/app/environments/environments.ts`:
 | Campo | Valor |
 |---|---|
 | Email | `admin@player2join.com` |
-| Contraseña | `Admin123!` |
+| Contraseña | `    ` |
 
 ### Administrador (secundario)
 

@@ -113,6 +113,23 @@ import { RouterLink } from '@angular/router';
             </div>
 
             <div class="form-group">
+              <label for="twitter">𝕏 Twitter</label>
+              <div class="twitter-input-wrapper">
+                <span class="twitter-at">&#64;</span>
+                <input
+                  id="twitter"
+                  type="text"
+                  formControlName="twitterHandle"
+                  placeholder="tu_usuario"
+                  maxlength="15"
+                />
+              </div>
+              @if (editForm.get('twitterHandle')!.hasError('pattern') && editForm.get('twitterHandle')!.touched) {
+                <span class="field-error">Solo letras, números y guiones bajos (máx. 15)</span>
+              }
+            </div>
+
+            <div class="form-group">
               <label>Email</label>
               <input type="email" [value]="profile()!.email" disabled class="disabled-input" />
               <span class="field-hint">El email no se puede cambiar</span>
@@ -156,6 +173,7 @@ export class ProfileComponent implements OnInit {
   editForm = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
+    twitterHandle: ['', [Validators.pattern(/^[A-Za-z0-9_]{0,15}$/)]],
   });
 
   async ngOnInit() {
@@ -183,6 +201,7 @@ export class ProfileComponent implements OnInit {
       this.editForm.patchValue({
         username: prof.username,
         description: prof.description ?? '',
+        twitterHandle: prof.twitterHandle ?? '',
       });
     }
 
@@ -237,6 +256,7 @@ export class ProfileComponent implements OnInit {
       const updates: any = {
         username: this.editForm.value.username,
         description: this.editForm.value.description ?? '',
+        twitterHandle: (this.editForm.value.twitterHandle ?? '').replace(/^@/, '').trim(),
       };
 
       // Solo actualizar foto si se ha cambiado

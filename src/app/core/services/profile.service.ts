@@ -18,6 +18,7 @@ export interface UserProfile {
   email: string;
   photoURL: string;        // URL remota o data:image base64
   description: string;     // Descripción / bio del jugador
+  twitterHandle?: string;  // Handle de Twitter/X (sin @)
   createdAt: number;
 }
 
@@ -68,7 +69,7 @@ export class ProfileService {
   }
 
   /** Actualiza campos del perfil */
-  async updateProfile(uid: string, data: Partial<Pick<UserProfile, 'username' | 'photoURL' | 'description'>>): Promise<void> {
+  async updateProfile(uid: string, data: Partial<Pick<UserProfile, 'username' | 'photoURL' | 'description' | 'twitterHandle'>>): Promise<void> {
     await updateDoc(doc(this.firestore, 'profiles', uid), data);
     // Actualizar Signal local
     this.profileSig.update(prev => prev ? { ...prev, ...data } : prev);

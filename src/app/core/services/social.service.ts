@@ -114,4 +114,13 @@ export class SocialService {
     }
     return profiles;
   }
+
+  /** Comprueba si dos usuarios se siguen mutuamente (para DMs) */
+  async areMutualFollowers(uid1: string, uid2: string): Promise<boolean> {
+    const [snap1, snap2] = await Promise.all([
+      getDoc(doc(this.firestore, 'follows', `${uid1}_${uid2}`)),
+      getDoc(doc(this.firestore, 'follows', `${uid2}_${uid1}`)),
+    ]);
+    return snap1.exists() && snap2.exists();
+  }
 }

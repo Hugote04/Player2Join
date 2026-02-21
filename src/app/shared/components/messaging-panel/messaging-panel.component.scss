@@ -1,0 +1,541 @@
+// === VARIABLES ===
+$bg-dark: #0d0d0d;
+$bg-card: #1a1a2e;
+$bg-input: #16213e;
+$accent: #e94560;
+$accent-hover: #ff6b81;
+$text: #eaeaea;
+$muted: #888;
+$transition: 0.2s ease;
+
+// === HOST POSITIONING ===
+:host {
+  position: fixed;
+  bottom: 0;
+  left: 1.5rem;
+  z-index: 1500;
+}
+
+// === TAB (panel cerrado) ===
+.dm-tab {
+  padding: 0.55rem 1.2rem;
+  background: $bg-card;
+  border: 1px solid rgba($accent, 0.3);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  color: $text;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all $transition;
+
+  &:hover {
+    background: $accent;
+    color: #fff;
+  }
+}
+
+// === PANEL ===
+.dm-panel {
+  width: 360px;
+  height: 480px;
+  background: $bg-dark;
+  border: 1px solid rgba($accent, 0.2);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// === HEADER ===
+.dm-header {
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  background: $bg-card;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.dm-hdr-title {
+  font-weight: 600;
+  color: $text;
+  font-size: 0.9rem;
+}
+
+.dm-hdr-btn {
+  background: none;
+  border: none;
+  color: $muted;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: all $transition;
+
+  &:hover {
+    color: $text;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.dm-close {
+  margin-left: auto;
+}
+
+.dm-hdr-user {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $text;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.dm-hdr-av {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+// === BODY (scrollable area) ===
+.dm-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+}
+
+// === CENTER STATES (loading, empty) ===
+.dm-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: $muted;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.dm-hint {
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.dm-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// === CONVERSATIONS ===
+.dm-conv {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background $transition;
+  text-align: left;
+  color: $text;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba($accent, 0.08);
+  }
+}
+
+.dm-av {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $bg-input;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba($accent, 0.25);
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+  span { color: $accent; font-weight: 700; font-size: 0.85rem; }
+}
+
+.dm-conv-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dm-conv-name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.dm-conv-preview {
+  display: block;
+  font-size: 0.72rem;
+  color: $muted;
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dm-conv-time {
+  font-size: 0.65rem;
+  color: $muted;
+  flex-shrink: 0;
+}
+
+// === WARNING ===
+.dm-warn {
+  padding: 0.6rem;
+  text-align: center;
+  font-size: 0.78rem;
+  background: rgba(#ffc107, 0.08);
+  border-bottom: 1px solid rgba(#ffc107, 0.15);
+  color: $text;
+  flex-shrink: 0;
+}
+
+// === MESSAGES ===
+.dm-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+}
+
+.dm-first-msg {
+  flex: 1;
+  height: auto;
+}
+
+.dm-msg {
+  display: flex;
+
+  &.sent { justify-content: flex-end; }
+  &.received { justify-content: flex-start; }
+}
+
+.dm-bubble {
+  max-width: 78%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 12px;
+
+  .sent & {
+    background: $accent;
+    color: #fff;
+    border-bottom-right-radius: 3px;
+  }
+
+  .received & {
+    background: $bg-card;
+    color: $text;
+    border-bottom-left-radius: 3px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+}
+
+.dm-msg-img {
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 8px;
+  display: block;
+  object-fit: contain;
+}
+
+.dm-game-link {
+  display: block;
+  font-size: 0.78rem;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: opacity $transition;
+
+  &:hover { opacity: 0.85; }
+}
+
+.dm-time {
+  display: block;
+  font-size: 0.55rem;
+  opacity: 0.5;
+  text-align: right;
+  margin-top: 0.1rem;
+}
+
+// === INPUT AREA ===
+.dm-input-area {
+  padding: 0.5rem;
+  background: $bg-card;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.dm-attach-dropdown {
+  position: absolute;
+  bottom: calc(100%);
+  left: 0.5rem;
+  background: $bg-card;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 5;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    background: none;
+    border: none;
+    color: $text;
+    font-size: 0.78rem;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover { background: rgba($accent, 0.12); }
+    & + button { border-top: 1px solid rgba(255, 255, 255, 0.06); }
+  }
+}
+
+.dm-extra-row {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+
+  input[type="url"] {
+    flex: 1;
+    padding: 0.35rem 0.5rem;
+    background: $bg-input;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    color: $text;
+    font-size: 0.78rem;
+    outline: none;
+
+    &:focus { border-color: $accent; }
+    &::placeholder { color: rgba($muted, 0.5); }
+  }
+
+  button {
+    padding: 0.35rem 0.6rem;
+    background: rgba($accent, 0.12);
+    border: 1px solid rgba($accent, 0.2);
+    border-radius: 6px;
+    color: $accent;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover { background: $accent; color: #fff; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+.dm-file-hidden { display: none; }
+
+.dm-preview {
+  text-align: center;
+  margin-bottom: 0.4rem;
+
+  img {
+    max-height: 80px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto 0.3rem;
+  }
+
+  button {
+    padding: 0.3rem 0.8rem;
+    background: rgba($accent, 0.12);
+    border: 1px solid rgba($accent, 0.2);
+    border-radius: 6px;
+    color: $accent;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover { background: $accent; color: #fff; }
+    &:disabled { opacity: 0.4; }
+  }
+}
+
+.dm-text-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.dm-att-btn {
+  background: none;
+  border: none;
+  font-size: 1.05rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+
+  &:hover { background: rgba(255, 255, 255, 0.06); }
+}
+
+.dm-text-row input {
+  flex: 1;
+  padding: 0.45rem 0.7rem;
+  background: $bg-input;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: $text;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+
+  &::placeholder { color: rgba($muted, 0.5); }
+  &:focus { border-color: $accent; }
+  &:disabled { opacity: 0.4; }
+}
+
+.dm-send-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: $accent;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all $transition;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) { background: $accent-hover; }
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
+}
+
+// === GAME PICKER OVERLAY ===
+.dm-games-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+  padding: 1rem;
+}
+
+.dm-games-box {
+  background: $bg-card;
+  border: 1px solid rgba($accent, 0.25);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.dm-games-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+
+  span {
+    color: $text;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: $muted;
+    cursor: pointer;
+    font-size: 1rem;
+
+    &:hover { color: $text; }
+  }
+}
+
+.dm-games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+
+.dm-game-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  color: $text;
+  font-family: inherit;
+  transition: all $transition;
+
+  &:hover {
+    border-color: rgba($accent, 0.3);
+    transform: translateY(-2px);
+  }
+
+  span {
+    display: block;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.dm-game-thumb {
+  height: 60px;
+  background-size: cover;
+  background-position: center;
+}

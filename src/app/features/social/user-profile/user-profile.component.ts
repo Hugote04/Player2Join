@@ -5,6 +5,7 @@ import { ProfileService, UserProfile } from '../../../core/services/profile.serv
 import { CollectionService, SavedGame } from '../../../core/services/collection.service';
 import { SocialService } from '../../../core/services/social.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { MessagingService } from '../../../core/services/messaging.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -40,6 +41,11 @@ import { AuthService } from '../../../core/services/auth.service';
 
           <div class="hero-info">
             <h1 class="hero-username">{{ userProfile()!.username }}</h1>
+            @if (userProfile()!.twitterHandle) {
+              <a [href]="'https://x.com/' + userProfile()!.twitterHandle" target="_blank" rel="noopener noreferrer" class="twitter-link">
+                𝕏 &#64;{{ userProfile()!.twitterHandle }}
+              </a>
+            }
             @if (userProfile()!.description) {
               <p class="hero-desc">{{ userProfile()!.description }}</p>
             }
@@ -75,6 +81,10 @@ import { AuthService } from '../../../core/services/auth.service';
                   + Seguir
                 }
               </button>
+            }
+
+            @if (isMutualFollow()) {
+              <button class="btn-dm" (click)="openDM()">💬 Enviar mensaje</button>
             }
 
             @if (isOwnProfile()) {
@@ -125,6 +135,7 @@ export class UserProfileComponent implements OnInit {
   private collectionService = inject(CollectionService);
   private socialService = inject(SocialService);
   private authService = inject(AuthService);
+  private messagingService = inject(MessagingService);
 
   userProfile = signal<UserProfile | null>(null);
   games = signal<SavedGame[]>([]);
@@ -135,6 +146,7 @@ export class UserProfileComponent implements OnInit {
   toggling = signal(false);
   canFollow = signal(false);
   isOwnProfile = signal(false);
+  isMutualFollow = signal(false);
 
   targetUid = '';
 
@@ -176,6 +188,12 @@ export class UserProfileComponent implements OnInit {
           const following2 = await this.socialService.isFollowing(this.targetUid);
           this.isFollowing.set(following2);
         }
+
+        // Comprobar follow mutuo para mensajes privados
+        if (currentUid && currentUid !== this.targetUid) {
+          const mutual = await this.socialService.areMutualFollowers(currentUid, this.targetUid);
+          this.isMutualFollow.set(mutual);
+        }
       }
     } catch {
       this.userProfile.set(null);
@@ -210,5 +228,10 @@ export class UserProfileComponent implements OnInit {
       dropped: '❌ Abandonado'
     };
     return labels[status] ?? status;
+  }
+
+  /** Abre el panel lateral de mensajes directos */
+  openDM() {
+    this.messagingService.openChat(this.targetUid);
   }
 }

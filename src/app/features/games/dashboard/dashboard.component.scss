@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // === VARIABLES ===
 $bg-dark: #0d0d0d;
 $bg-card: #1a1a2e;
@@ -280,7 +282,7 @@ $transition: 0.3s ease;
     padding: 0.6rem 0.8rem;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: darken($bg-card, 5%);
+    background: color.adjust($bg-card, $lightness: -5%);
     color: $text-primary;
     font-size: 0.9rem;
     outline: none;

@@ -4,6 +4,20 @@ import { AuthService } from '../services/auth.service';
 import { filter, map, take } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
+/**
+ * AuthGuard — Protege rutas que requieren autenticación.
+ *
+ * Comprueba `AuthService.currentUserSig()` para determinar si
+ * el usuario está autenticado. Si el signal aún es `undefined`
+ * (Firebase cargando), espera a que se resuelva mediante un Observable.
+ *
+ * - Si hay usuario autenticado: permite el acceso.
+ * - Si no: redirige a `/login` (RA6 - Check 6).
+ *
+ * @param route - Instantánea de la ruta activada
+ * @param state - Estado del router
+ * @returns `true` o un `UrlTree` de redirección
+ */
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);

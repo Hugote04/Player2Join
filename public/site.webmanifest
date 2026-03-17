@@ -1,0 +1,18 @@
+{
+  "name": "Player2Join",
+  "short_name": "P2J",
+  "description": "Red social para gamers. Descubre juegos, gestiona tu colección y conecta con otros jugadores.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F0F23",
+  "theme_color": "#7C3AED",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/logo_p2j.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

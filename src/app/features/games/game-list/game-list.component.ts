@@ -119,11 +119,17 @@ import { SlicePipe } from '@angular/common';
                 </div>
               </div>
             </a>
-            <!-- Admin: botón ocultar del catálogo -->
+            <!-- Admin: botón ocultar/restaurar del catálogo -->
             @if (isAdmin()) {
-              <button class="btn-admin-hide" (click)="hideFromCatalog($event, game)">
-                🚫 Ocultar del catálogo
-              </button>
+              @if (isHiddenGame(game.id)) {
+                <button class="btn-admin-restore" (click)="restoreFromCatalog($event, game)">
+                  ✅ Restaurar al catálogo
+                </button>
+              } @else {
+                <button class="btn-admin-hide" (click)="hideFromCatalog($event, game)">
+                  🚫 Ocultar del catálogo
+                </button>
+              }
             }
             </div>
           }
@@ -365,6 +371,25 @@ export class GameListComponent implements OnInit {
       web: '🌐'
     };
     return icons[slug] ?? '🎲';
+  }
+
+  /** Comprueba si un juego está oculto del catálogo */
+  isHiddenGame(gameId: number): boolean {
+    return this.collectionService.isHidden(String(gameId));
+  }
+
+  /** Admin: Restaurar un juego oculto al catálogo */
+  async restoreFromCatalog(event: Event, game: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    const ok = confirm(`¿Restaurar "${game.name}" al catálogo?`);
+    if (!ok) return;
+    try {
+      await this.collectionService.restoreGameToCatalog(String(game.id));
+      this.toast.success(`"${game.name}" restaurado al catálogo`);
+    } catch {
+      this.toast.error('Error al restaurar el juego');
+    }
   }
 
   /** Admin: Ocultar un juego del catálogo */

@@ -313,7 +313,8 @@
   }
 }
 
-.btn-admin-hide {
+.btn-admin-hide,
+.btn-admin-restore {
   display: block;
   flex: 1;
   width: 100%;
@@ -330,6 +331,15 @@
   &:hover {
     background: rgba(255, 71, 87, 0.1);
     color: var(--color-error);
+  }
+}
+
+.btn-admin-restore {
+  color: var(--color-success);
+
+  &:hover {
+    background: rgba(74, 222, 128, 0.1);
+    color: var(--color-success);
   }
 }
 

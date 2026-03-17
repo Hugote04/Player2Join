@@ -62,6 +62,7 @@ export class MessagingService {
   messages = signal<ChatMessage[]>([]);
 
   private msgUnsub: Unsubscribe | null = null;
+  private convoUnsub: Unsubscribe | null = null;
 
   /** Genera un ID determinístico para la conversación entre dos UIDs */
   getConversationId(uid1: string, uid2: string): string {
@@ -117,6 +118,37 @@ export class MessagingService {
 
     this.conversations.set(convos);
     return convos;
+  }
+
+  /**
+   * Escucha las conversaciones del usuario en tiempo real.
+   * Actualiza el signal `conversations` automáticamente.
+   */
+  listenMyConversations(): void {
+    this.stopConversations();
+    const uid = this.auth.currentUserSig()?.uid;
+    if (!uid) return;
+
+    const col = collection(this.firestore, 'conversations');
+    const q = query(col, where('participants', 'array-contains', uid));
+
+    this.convoUnsub = onSnapshot(q, (snap) => {
+      const convos = snap.docs
+        .map(d => d.data() as Conversation)
+        .filter(c => c.lastMessage)
+        .sort((a, b) => b.lastMessageAt - a.lastMessageAt);
+      this.conversations.set(convos);
+    }, () => {
+      this.loadMyConversations();
+    });
+  }
+
+  /** Deja de escuchar conversaciones */
+  stopConversations(): void {
+    if (this.convoUnsub) {
+      this.convoUnsub();
+      this.convoUnsub = null;
+    }
   }
 
   /**
@@ -200,6 +232,7 @@ export class MessagingService {
   /** Limpia todo el estado del servicio */
   clear(): void {
     this.stopMessages();
+    this.stopConversations();
     this.conversations.set([]);
     this.messages.set([]);
   }

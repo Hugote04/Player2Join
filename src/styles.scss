@@ -1,32 +1,103 @@
-/* === GLOBAL STYLES — Player2Join Gaming Theme === */
+/* =========================================================
+   PLAYER2JOIN — GLOBAL DESIGN SYSTEM
+   Style: Retro-Futurism · Neon · Glassmorphism
+   Fonts: Russo One (títulos) + Chakra Petch (UI/body)
+   Source of Truth: todas las variables CSS viven aquí
+   ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Google Fonts — Russo One + Chakra Petch */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&display=swap');
 
-*,
-*::before,
-*::after {
+/* ========================
+   CSS CUSTOM PROPERTIES
+   ======================== */
+:root {
+  /* --- Colores base --- */
+  --color-bg:         #0F0F23;   /* Deep space */
+  --color-surface:    #1A1A3E;   /* Surface/card layer */
+  --color-card:       #16213e;   /* Card background */
+  --color-input:      #0D1B35;   /* Input fields */
+
+  /* --- Paleta gaming: Neon Purple + Rose CTA --- */
+  --color-primary:    #7C3AED;   /* Neon purple */
+  --color-primary-h:  #8B5CF6;   /* Purple hover */
+  --color-secondary:  #A78BFA;   /* Light purple */
+  --color-cta:        #F43F5E;   /* Rose/Red — acción principal */
+  --color-cta-h:      #FB7185;   /* Rose hover */
+
+  /* --- Texto --- */
+  --color-text:       #E2E8F0;   /* Texto primario */
+  --color-muted:      #94A3B8;   /* Texto secundario */
+  --color-border:     rgba(124, 58, 237, 0.15);
+
+  /* --- Estados --- */
+  --color-error:      #FF4757;
+  --color-success:    #4ADE80;
+  --color-warning:    #FFC107;
+
+  /* --- Tipografía --- */
+  --font-title:  'Russo One', sans-serif;
+  --font-body:   'Chakra Petch', 'Segoe UI', sans-serif;
+
+  /* --- Border radius --- */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-xl:   20px;
+  --r-full: 999px;
+
+  /* --- Sombras --- */
+  --sh-sm:     0 2px 8px rgba(0, 0, 0, 0.3);
+  --sh-md:     0 8px 32px rgba(0, 0, 0, 0.4);
+  --sh-lg:     0 12px 40px rgba(0, 0, 0, 0.6);
+  --sh-neon:   0 0 20px rgba(124, 58, 237, 0.5), 0 0 40px rgba(124, 58, 237, 0.2);
+  --sh-cta:    0 4px 20px rgba(244, 63, 94, 0.45), 0 8px 30px rgba(244, 63, 94, 0.2);
+  --sh-glass:  0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* --- Z-index --- */
+  --z-10:     10;
+  --z-20:     20;
+  --z-30:     30;
+  --z-modal:  1000;
+  --z-nav:    1100;
+  --z-splash: 99999;
+
+  /* --- Transiciones --- */
+  --t-fast:  150ms ease;
+  --t-base:  200ms ease;
+  --t-slow:  300ms ease;
+
+  /* --- Glassmorphism --- */
+  --glass-bg:     rgba(22, 33, 62, 0.75);
+  --glass-border: rgba(124, 58, 237, 0.2);
+  --glass-blur:   blur(16px);
+
+  /* --- Neon glow (text-shadow / box-shadow) --- */
+  --neon-primary: 0 0 8px rgba(124, 58, 237, 0.9), 0 0 20px rgba(124, 58, 237, 0.5), 0 0 40px rgba(124, 58, 237, 0.2);
+  --neon-cta:     0 0 8px rgba(244, 63, 94, 0.9), 0 0 20px rgba(244, 63, 94, 0.5);
+}
+
+/* ========================
+   RESET & BASE
+   ======================== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  --bg-dark: #0d0d0d;
-  --bg-surface: #1a1a2e;
-  --bg-card: #16213e;
-  --accent: #e94560;
-  --accent-hover: #ff6b81;
-  --text-primary: #eaeaea;
-  --text-muted: #888;
-  --radius: 8px;
-}
-
 html, body {
   height: 100%;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: var(--bg-dark);
-  color: var(--text-primary);
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  letter-spacing: 0.5px;
 }
 
 a {
@@ -34,16 +105,88 @@ a {
   text-decoration: none;
 }
 
+/* ========================
+   LAYOUT
+   ======================== */
 .app-content {
   min-height: calc(100vh - 64px);
   padding: 2rem;
+  /* Espacio para navbar flotante (altura ~64px + top 16px + gap 16px) */
+  padding-top: calc(64px + 2rem);
 
   @media (max-width: 768px) {
-    padding: 1rem 0.75rem;
+    padding: calc(56px + 1.25rem) 0.75rem 1rem;
   }
 }
 
-/* === Splash Screen === */
+/* ========================
+   ANIMACIONES GLOBALES
+   ======================== */
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50%       { opacity: 0.85; filter: brightness(1.1); }
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20%       { transform: translate(-2px, 1px) skewX(1deg); }
+  40%       { transform: translate(2px, -1px) skewX(-1deg); }
+  60%       { transform: translate(-1px, 2px); }
+  80%       { transform: translate(1px, -2px); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notifPop {
+  0%   { transform: scale(0); }
+  70%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes splash-logo-in {
+  0%   { opacity: 0; transform: scale(0.6); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splash-fade-in {
+  to { opacity: 1; }
+}
+
+@keyframes splash-sweep {
+  0%   { transform: translateX(-200%); }
+  100% { transform: translateX(500%); }
+}
+
+/* Respetar prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================
+   UTILITY: GLASSMORPHISM
+   ======================== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* ========================
+   SPLASH SCREEN
+   ======================== */
 .splash {
   position: fixed;
   inset: 0;
@@ -52,8 +195,8 @@ a {
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0d0d0d 70%);
-  z-index: 99999;
+  background: radial-gradient(ellipse at center, #1A1A3E 0%, #0F0F23 70%);
+  z-index: var(--z-splash);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
@@ -64,13 +207,13 @@ a {
   opacity: 0;
   transform: scale(0.6);
   animation: splash-logo-in 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-  filter: drop-shadow(0 0 40px rgba(233, 69, 96, 0.35));
+  filter: drop-shadow(0 0 40px rgba(124, 58, 237, 0.5));
 }
 
 .splash__bar {
   width: 240px;
   height: 4px;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
   opacity: 0;
@@ -81,38 +224,13 @@ a {
   display: block;
   height: 100%;
   width: 40%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
   animation: splash-sweep 1s ease-in-out infinite;
 }
 
-/* Ocultar splash */
 .splash--hidden {
   opacity: 0;
   transform: scale(1.05);
   pointer-events: none;
-}
-
-@keyframes splash-logo-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes splash-fade-in {
-  to { opacity: 1; }
-}
-
-@keyframes splash-sweep {
-  0% { transform: translateX(-200%); }
-  100% { transform: translateX(500%); }
 }

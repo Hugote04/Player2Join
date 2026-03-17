@@ -26,8 +26,16 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/mcp.json
 .history/*
+
+# Claude Code
+.claude/
+
+# Design system generated files
+design-system/
+
+# Private API keys / environment config
+src/app/environments/environments.ts
 
 # Miscellaneous
 /.angular/cache
@@ -42,3 +50,5 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+design-system\player2join\MASTER.md

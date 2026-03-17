@@ -1,47 +1,72 @@
-$bg-dark: #0d0d0d;
-$bg-card: #1a1a2e;
-$accent: #e94560;
-$accent-hover: #ff6b81;
-$text-primary: #eaeaea;
-$text-muted: #888;
-$radius: 12px;
-$transition: 0.3s ease;
+// === HOME — Retro-Futurism Gaming
+// Tokens: variables CSS desde styles.scss (:root)
 
 .home {
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
   text-align: center;
 }
 
 // === HERO ===
 .hero {
-  padding: 3rem 1rem 2rem;
+  position: relative;
+  padding: 4rem 1rem 3rem;
+  overflow: hidden;
+
+  // Grid cyberpunk background
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // Radial glow overlay
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(124, 58, 237, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * { position: relative; z-index: 1; }
 
   &__logo {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
-    filter: drop-shadow(0 0 30px rgba($accent, 0.3));
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.6));
+    animation: neon-pulse 3s ease-in-out infinite;
   }
 
   &__title {
-    font-size: 2.8rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 0.6rem;
+    font-family: var(--font-title);
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
+    text-shadow: var(--neon-primary);
 
     .accent {
-      color: $accent;
+      color: var(--color-cta);
+      text-shadow: var(--neon-cta);
     }
   }
 
   &__subtitle {
-    color: $text-muted;
+    color: var(--color-muted);
     font-size: 1.1rem;
     max-width: 520px;
-    margin: 0 auto 2rem;
-    line-height: 1.5;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
   }
 
   &__actions {
@@ -52,37 +77,65 @@ $transition: 0.3s ease;
   }
 }
 
+// === BOTONES HERO ===
 .btn-primary {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, $accent, #8e44ad);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: linear-gradient(135deg, var(--color-cta), #8B1A2E);
   color: #fff;
-  border-radius: $radius;
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   text-decoration: none;
-  transition: all $transition;
+  transition: all var(--t-base);
+  cursor: pointer;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba($accent, 0.4);
+    box-shadow: var(--sh-cta);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
   }
 }
 
 .btn-secondary {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background: rgba(255, 255, 255, 0.06);
-  color: $text-primary;
-  border-radius: $radius;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--color-text);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   text-decoration: none;
-  transition: all $transition;
+  transition: all var(--t-base);
+  cursor: pointer;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(124, 58, 237, 0.18);
+    border-color: var(--color-primary);
     transform: translateY(-2px);
+    box-shadow: var(--sh-neon);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -95,68 +148,96 @@ $transition: 0.3s ease;
 }
 
 .feature-card {
-  background: $bg-card;
-  border-radius: $radius;
+  background: var(--color-card);
+  border-radius: var(--r-md);
   padding: 2rem 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all $transition;
+  transition: all var(--t-slow);
+  cursor: default;
 
   &:hover {
-    border-color: rgba($accent, 0.3);
+    border-color: rgba(124, 58, 237, 0.35);
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), var(--sh-neon);
   }
 
   .feature-icon {
-    font-size: 2.2rem;
-    display: block;
-    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 1rem;
+    border-radius: var(--r-md);
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    color: var(--color-secondary);
+
+    svg {
+      width: 26px;
+      height: 26px;
+    }
   }
 
   h3 {
-    color: $text-primary;
-    font-size: 1.15rem;
-    margin-bottom: 0.4rem;
-  }
-
-  p {
-    color: $text-muted;
-    font-size: 0.88rem;
-    line-height: 1.4;
-  }
-}
-
-// === CTA ===
-.cta {
-  padding: 2.5rem 1.5rem;
-  background: $bg-card;
-  border-radius: $radius;
-  border: 1px solid rgba($accent, 0.15);
-  margin-bottom: 2rem;
-
-  h2 {
-    font-size: 1.5rem;
+    font-family: var(--font-title);
+    color: var(--color-text);
+    font-size: 1.05rem;
     margin-bottom: 0.5rem;
   }
 
   p {
-    color: $text-muted;
+    color: var(--color-muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+// === CTA FINAL ===
+.cta {
+  padding: 2.5rem 1.5rem;
+  background: var(--color-card);
+  border-radius: var(--r-md);
+  border: 1px solid rgba(244, 63, 94, 0.15);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 100%, rgba(244, 63, 94, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  h2 {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  p {
+    color: var(--color-muted);
     margin-bottom: 1.2rem;
+    position: relative;
   }
 }
 
 // === RESPONSIVE ===
 @media (max-width: 768px) {
   .hero {
-    padding: 2rem 0.5rem 1.5rem;
+    padding: 2.5rem 0.5rem 2rem;
 
     &__logo {
-      width: 80px;
-      height: 80px;
+      width: 72px;
+      height: 72px;
     }
 
     &__title {
-      font-size: 1.8rem;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
     }
 
     &__subtitle {
@@ -166,13 +247,13 @@ $transition: 0.3s ease;
 
   .btn-primary,
   .btn-secondary {
-    padding: 0.65rem 1.4rem;
-    font-size: 0.9rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 0.88rem;
   }
 
   .features {
     gap: 1rem;
-    padding: 1rem 0 2rem;
+    padding: 1.5rem 0 2rem;
   }
 
   .feature-card {
@@ -180,10 +261,27 @@ $transition: 0.3s ease;
   }
 
   .cta {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1rem;
 
     h2 {
       font-size: 1.25rem;
+    }
+  }
+}
+
+@media (max-width: 375px) {
+  .hero__title {
+    font-size: 1.9rem;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    align-items: center;
+
+    .btn-primary,
+    .btn-secondary {
+      width: 100%;
+      justify-content: center;
     }
   }
 }

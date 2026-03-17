@@ -1,26 +1,28 @@
-// === VARIABLES ===
-$bg-dark: #0d0d0d;
-$bg-card: #1a1a2e;
-$accent: #e94560;
-$accent-hover: #ff6b81;
-$text-primary: #eaeaea;
-$text-muted: #888;
-$font-gaming: 'Segoe UI', 'Roboto', sans-serif;
-$transition-fast: 0.25s ease;
+// === NAVBAR — Glassmorphism flotante ===
+// Tokens: todos los colores/tamaños desde styles.scss (:root)
 
-// === NAVBAR ===
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   height: 64px;
-  background: $bg-dark;
-  border-bottom: 2px solid $accent;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  font-family: $font-gaming;
+
+  /* Flotante con glassmorphism */
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: var(--z-nav);
+  border-radius: var(--r-lg);
+
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--sh-glass), 0 0 0 1px rgba(124, 58, 237, 0.05);
+
+  font-family: var(--font-body);
 }
 
 // --- Logo ---
@@ -29,29 +31,30 @@ $transition-fast: 0.25s ease;
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  color: $text-primary;
-  font-size: 1.4rem;
-  font-weight: 700;
+  color: var(--color-text);
+  font-family: var(--font-title);
+  font-size: 1.3rem;
   letter-spacing: 1px;
-  transition: color $transition-fast;
+  transition: color var(--t-fast);
+  cursor: pointer;
 
   .logo-img {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
   }
 
   .logo-highlight {
-    color: $accent;
+    color: var(--color-cta);
   }
 
   &:hover {
-    color: $accent-hover;
+    color: var(--color-secondary);
   }
 }
 
-// --- Links de navegación ---
+// --- Links ---
 .navbar__links {
   display: flex;
   align-items: center;
@@ -60,82 +63,101 @@ $transition-fast: 0.25s ease;
 
 .nav-link {
   text-decoration: none;
-  color: $text-muted;
-  font-size: 0.95rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
   font-weight: 500;
   padding: 0.4rem 0;
   border-bottom: 2px solid transparent;
-  transition: all $transition-fast;
+  transition: all var(--t-fast);
+  cursor: pointer;
 
   &:hover {
-    color: $text-primary;
-    border-bottom-color: $accent;
+    color: var(--color-text);
+    border-bottom-color: var(--color-primary);
   }
 
   &.active {
-    color: $accent;
-    border-bottom-color: $accent;
+    color: var(--color-secondary);
+    border-bottom-color: var(--color-primary);
   }
 }
 
-// --- Botones de autenticación ---
+// --- Auth buttons ---
 .navbar__auth {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .btn-login {
   background: transparent;
-  color: $text-primary;
-  border: 1px solid $text-muted;
+  color: var(--color-text);
+  border: 1px solid rgba(148, 163, 184, 0.4);
   padding: 0.45rem 1.2rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: var(--r-sm);
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all $transition-fast;
+  transition: all var(--t-fast);
   text-decoration: none;
+  font-family: var(--font-body);
 
   &:hover {
-    border-color: $accent;
-    color: $accent;
+    border-color: var(--color-primary);
+    color: var(--color-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
 .btn-register {
-  background: $accent;
+  background: var(--color-cta);
   color: #fff;
   border: none;
-  padding: 0.5rem 1.3rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--r-sm);
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all $transition-fast;
+  transition: all var(--t-fast);
   text-decoration: none;
+  font-family: var(--font-body);
 
   &:hover {
-    background: $accent-hover;
+    background: var(--color-cta-h);
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba($accent, 0.4);
+    box-shadow: var(--sh-cta);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
   }
 }
 
 .btn-logout {
   background: transparent;
-  color: $text-muted;
-  border: 1px solid $text-muted;
-  padding: 0.45rem 1.2rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  color: var(--color-muted);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--r-sm);
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all $transition-fast;
+  transition: all var(--t-fast);
+  font-family: var(--font-body);
 
   &:hover {
-    border-color: $accent;
-    color: $accent;
+    border-color: var(--color-cta);
+    color: var(--color-cta);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
   }
 }
 
@@ -146,11 +168,17 @@ $transition-fast: 0.25s ease;
   gap: 0.5rem;
   text-decoration: none;
   padding: 0.3rem 0.6rem;
-  border-radius: 8px;
-  transition: background $transition-fast;
+  border-radius: var(--r-md);
+  transition: background var(--t-fast);
+  cursor: pointer;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(124, 58, 237, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -159,11 +187,11 @@ $transition-fast: 0.25s ease;
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba($accent, 0.5);
+  border: 2px solid rgba(124, 58, 237, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba($accent, 0.15);
+  background: rgba(124, 58, 237, 0.15);
   flex-shrink: 0;
 
   img {
@@ -173,16 +201,16 @@ $transition-fast: 0.25s ease;
   }
 
   .avatar-fallback {
-    color: $accent;
+    color: var(--color-secondary);
     font-weight: 700;
     font-size: 0.85rem;
   }
 }
 
 .user-name {
-  color: $accent;
+  color: var(--color-secondary);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
@@ -197,16 +225,30 @@ $transition-fast: 0.25s ease;
 .btn-notif {
   background: transparent;
   border: none;
-  font-size: 1.25rem;
   cursor: pointer;
   position: relative;
-  padding: 0.3rem 0.5rem;
-  border-radius: 8px;
-  transition: background $transition-fast;
-  line-height: 1;
+  padding: 0.4rem;
+  border-radius: var(--r-md);
+  transition: background var(--t-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--color-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    display: block;
   }
 }
 
@@ -214,9 +256,9 @@ $transition-fast: 0.25s ease;
   position: absolute;
   top: -2px;
   right: -4px;
-  background: $accent;
+  background: var(--color-cta);
   color: #fff;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   min-width: 17px;
   height: 17px;
@@ -224,14 +266,8 @@ $transition-fast: 0.25s ease;
   text-align: center;
   border-radius: 50%;
   padding: 0 4px;
-  box-shadow: 0 2px 6px rgba($accent, 0.5);
+  box-shadow: var(--sh-cta);
   animation: notifPop 0.3s ease;
-}
-
-@keyframes notifPop {
-  0% { transform: scale(0); }
-  70% { transform: scale(1.2); }
-  100% { transform: scale(1); }
 }
 
 .notif-panel {
@@ -240,11 +276,11 @@ $transition-fast: 0.25s ease;
   right: 0;
   width: 340px;
   max-height: 420px;
-  background: $bg-card;
+  background: var(--color-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-  z-index: 100;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  z-index: var(--z-30);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -258,8 +294,9 @@ $transition-fast: 0.25s ease;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
   h4 {
-    color: $text-primary;
+    color: var(--color-text);
     font-size: 0.95rem;
+    font-family: var(--font-body);
     margin: 0;
   }
 }
@@ -267,21 +304,22 @@ $transition-fast: 0.25s ease;
 .btn-mark-read {
   background: transparent;
   border: none;
-  color: $accent;
+  color: var(--color-primary);
   font-size: 0.75rem;
   cursor: pointer;
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  transition: background $transition-fast;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+  font-family: var(--font-body);
 
   &:hover {
-    background: rgba($accent, 0.15);
+    background: rgba(124, 58, 237, 0.15);
   }
 }
 
 .notif-empty {
   text-align: center;
-  color: $text-muted;
+  color: var(--color-muted);
   font-size: 0.85rem;
   padding: 2rem 1rem;
   margin: 0;
@@ -292,7 +330,7 @@ $transition-fast: 0.25s ease;
   flex: 1;
 
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
 }
 
 .notif-item {
@@ -301,7 +339,7 @@ $transition-fast: 0.25s ease;
   gap: 0.7rem;
   padding: 0.7rem 1rem;
   text-decoration: none;
-  transition: background $transition-fast;
+  transition: background var(--t-fast);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   cursor: pointer;
 
@@ -310,8 +348,8 @@ $transition-fast: 0.25s ease;
   }
 
   &.unread {
-    background: rgba($accent, 0.06);
-    border-left: 3px solid $accent;
+    background: rgba(244, 63, 94, 0.06);
+    border-left: 3px solid var(--color-cta);
   }
 }
 
@@ -321,11 +359,11 @@ $transition-fast: 0.25s ease;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: rgba($accent, 0.15);
+  background: rgba(124, 58, 237, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba($accent, 0.3);
+  border: 1px solid rgba(124, 58, 237, 0.3);
 
   img {
     width: 100%;
@@ -335,7 +373,7 @@ $transition-fast: 0.25s ease;
 
   .avatar-fallback {
     font-size: 0.85rem;
-    color: $accent;
+    color: var(--color-secondary);
     font-weight: 700;
   }
 }
@@ -347,18 +385,18 @@ $transition-fast: 0.25s ease;
   p {
     margin: 0;
     font-size: 0.82rem;
-    color: $text-primary;
+    color: var(--color-text);
     line-height: 1.3;
 
     strong {
-      color: $accent;
+      color: var(--color-secondary);
     }
   }
 }
 
 .notif-time {
   font-size: 0.7rem;
-  color: $text-muted;
+  color: var(--color-muted);
 }
 
 // --- Role Badge ---
@@ -366,26 +404,27 @@ $transition-fast: 0.25s ease;
   font-size: 0.6rem;
   font-weight: 700;
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-left: 0.4rem;
 
   &.admin {
-    background: $accent;
-    color: #fff;
-    box-shadow: 0 0 8px rgba($accent, 0.5);
+    background: var(--color-warning);
+    color: #000;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
   }
 }
 
 // --- Admin Nav Link ---
 .admin-link {
-  color: #ffc107 !important;
+  color: var(--color-warning) !important;
   font-weight: 600;
 
   &:hover, &.active {
     color: #ffdb4d !important;
-    text-shadow: 0 0 8px rgba(#ffc107, 0.4);
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+    border-bottom-color: var(--color-warning) !important;
   }
 }
 
@@ -399,31 +438,30 @@ $transition-fast: 0.25s ease;
   border: none;
   cursor: pointer;
   padding: 0.4rem;
-  z-index: 10;
+  z-index: var(--z-10);
 
   span {
     display: block;
-    width: 24px;
+    width: 22px;
     height: 2px;
-    background: $text-primary;
+    background: var(--color-text);
     border-radius: 2px;
-    transition: all 0.3s ease;
+    transition: all var(--t-slow);
   }
 
-  &.open span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-  }
-  &.open span:nth-child(2) {
-    opacity: 0;
-  }
-  &.open span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-  }
+  &.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  &.open span:nth-child(2) { opacity: 0; }
+  &.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 }
 
 // === RESPONSIVE — MOBILE ===
 @media (max-width: 768px) {
   .navbar {
+    /* En móvil: quita el margen lateral, solo bordes inferiores */
+    top: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 var(--r-lg) var(--r-lg);
     flex-wrap: wrap;
     height: auto;
     min-height: 56px;
@@ -431,11 +469,12 @@ $transition-fast: 0.25s ease;
   }
 
   .navbar__logo {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
 
     .logo-img {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
     }
   }
 
@@ -463,10 +502,10 @@ $transition-fast: 0.25s ease;
     .nav-link {
       padding: 0.7rem 0.5rem;
       border-bottom: none;
-      border-radius: 6px;
+      border-radius: var(--r-sm);
 
       &:hover {
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(124, 58, 237, 0.08);
       }
     }
   }

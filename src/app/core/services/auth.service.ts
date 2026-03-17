@@ -1,11 +1,12 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { 
-  Auth, 
-  user, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signOut, 
-  User 
+import {
+  Auth,
+  user,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  User,
+  getIdTokenResult
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { ProfileService } from './profile.service';
@@ -44,18 +45,19 @@ export class AuthService {
     user(this.auth).subscribe(async (u) => {
       this.currentUserSig.set(u);
       if (u) {
-        // Check 5: Almacenar JWT en localStorage
-        const token = await u.getIdToken();
-        localStorage.setItem(JWT_KEY, token);
+        // Obtener token e inspeccionar custom claims server-side
+        const tokenResult = await getIdTokenResult(u, /* forceRefresh */ true);
+        localStorage.setItem(JWT_KEY, tokenResult.token);
+
+        // Rol via custom claim admin:true (server-side, no bypasseable)
+        const isAdmin = tokenResult.claims['admin'] === true;
+        this.roleSig.set(isAdmin ? 'admin' : 'user');
 
         // Cargar perfil y notificaciones
         this.profileService.loadProfile(u.uid);
         this.notificationService.listenNotifications(u.uid);
-
-        // Determinar rol: admin por email (configurable)
-        this.roleSig.set(this.resolveRole(u.email));
       } else {
-        // Check 7: Limpiar token y estado
+        // Limpiar token y estado
         localStorage.removeItem(JWT_KEY);
         this.profileService.profileSig.set(null);
         this.notificationService.clear();
@@ -86,7 +88,10 @@ export class AuthService {
     const cred = await signInWithEmailAndPassword(this.auth, email, pass);
     // Actualizar signal inmediatamente para que authGuard lo vea
     this.currentUserSig.set(cred.user);
-    this.roleSig.set(this.resolveRole(cred.user.email));
+    // Rol via custom claim server-side
+    const tokenResult = await getIdTokenResult(cred.user, true);
+    const isAdmin = tokenResult.claims['admin'] === true;
+    this.roleSig.set(isAdmin ? 'admin' : 'user');
     return cred;
   }
 
@@ -115,15 +120,4 @@ export class AuthService {
     return localStorage.getItem(JWT_KEY);
   }
 
-  /**
-   * Resuelve el rol del usuario basado en email.
-   * Los admins se definen por un listado de correos conocidos.
-   */
-  private resolveRole(email: string | null): 'admin' | 'user' {
-    const adminEmails = [
-      'admin@player2join.com',
-      'marinohugo07@gmail.com'
-    ];
-    return email && adminEmails.includes(email) ? 'admin' : 'user';
-  }
 }

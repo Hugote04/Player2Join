@@ -233,10 +233,26 @@ export class MessagingPanelComponent implements OnDestroy {
         if (el) el.scrollTop = el.scrollHeight;
       }, 80);
     });
+
+    // Sincronizar lista de conversaciones en tiempo real + cargar perfiles nuevos
+    effect(() => {
+      const convos = this.msgSvc.conversations();
+      this.conversations.set(convos);
+      const uid = this.authService.currentUserSig()?.uid ?? '';
+      for (const c of convos) {
+        const otherUid = c.participants.find(p => p !== uid) ?? '';
+        if (otherUid && !this.profileMap()[otherUid]) {
+          this.profileService.getPublicProfile(otherUid).then(prof => {
+            if (prof) this.profileMap.update(m => ({ ...m, [otherUid]: prof }));
+          });
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
     this.msgSvc.stopMessages();
+    this.msgSvc.stopConversations();
   }
 
   // ==============================
@@ -246,18 +262,13 @@ export class MessagingPanelComponent implements OnDestroy {
     this.listLoading.set(true);
     this.myUid = this.authService.currentUserSig()?.uid ?? '';
     try {
-      const convos = await this.msgSvc.loadMyConversations();
-      this.conversations.set(convos);
-      for (const c of convos) {
-        const otherUid = c.participants.find(p => p !== this.myUid) ?? '';
-        if (otherUid && !this.profileMap()[otherUid]) {
-          const prof = await this.profileService.getPublicProfile(otherUid);
-          if (prof) this.profileMap.update(m => ({ ...m, [otherUid]: prof }));
-        }
-      }
+      // Carga inicial para mostrar datos rápido
+      await this.msgSvc.loadMyConversations();
     } finally {
       this.listLoading.set(false);
     }
+    // Arrancar listener en tiempo real (el effect del constructor sincroniza el signal)
+    this.msgSvc.listenMyConversations();
   }
 
   getOtherUid(convo: Conversation): string {

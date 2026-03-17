@@ -1,16 +1,6 @@
-@use "sass:color";
+// === DASHBOARD — Tokens desde styles.scss (:root)
+// Eliminado: @use "sass:color" y variables locales duplicadas
 
-// === VARIABLES ===
-$bg-dark: #0d0d0d;
-$bg-card: #1a1a2e;
-$accent: #e94560;
-$accent-hover: #ff6b81;
-$text-primary: #eaeaea;
-$text-muted: #888;
-$radius: 10px;
-$transition: 0.3s ease;
-
-// === DASHBOARD ===
 .dashboard {
   max-width: 1100px;
   margin: 0 auto;
@@ -21,18 +11,18 @@ $transition: 0.3s ease;
   margin-bottom: 2rem;
 
   h1 {
+    font-family: var(--font-title);
     font-size: 1.8rem;
-    font-weight: 700;
-    color: $text-primary;
+    color: var(--color-text);
     margin-bottom: 0.3rem;
   }
 
   .subtitle {
-    color: $text-muted;
+    color: var(--color-muted);
     font-size: 0.95rem;
 
     strong {
-      color: $accent;
+      color: var(--color-cta);
     }
   }
 }
@@ -46,22 +36,16 @@ $transition: 0.3s ease;
   min-height: 40vh;
   gap: 1rem;
 
-  p {
-    color: $text-muted;
-  }
+  p { color: var(--color-muted); }
 }
 
 .spinner {
   width: 44px;
   height: 44px;
-  border: 4px solid rgba($accent, 0.2);
-  border-top-color: $accent;
+  border: 4px solid rgba(244, 63, 94, 0.2);
+  border-top-color: var(--color-cta);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 // === ESTADO VACÍO ===
@@ -72,23 +56,30 @@ $transition: 0.3s ease;
   justify-content: center;
   min-height: 40vh;
   gap: 1.2rem;
-  color: $text-muted;
+  color: var(--color-muted);
   font-size: 1.05rem;
 }
 
 .btn-explore {
   padding: 0.6rem 1.6rem;
-  border-radius: 8px;
-  background: $accent;
+  border-radius: var(--r-md);
+  background: var(--color-cta);
   color: #fff;
+  font-family: var(--font-body);
   font-weight: 600;
   text-decoration: none;
-  transition: all $transition;
+  transition: all var(--t-base);
+  cursor: pointer;
 
   &:hover {
-    background: $accent-hover;
+    background: var(--color-cta-h);
     transform: translateY(-2px);
-    box-shadow: 0 4px 18px rgba($accent, 0.35);
+    box-shadow: var(--sh-cta);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
   }
 }
 
@@ -101,18 +92,18 @@ $transition: 0.3s ease;
 
 // === CARD ===
 .game-card {
-  background: $bg-card;
-  border-radius: $radius;
+  background: var(--color-card);
+  border-radius: var(--r-md);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all $transition;
+  transition: all var(--t-slow);
   display: flex;
   flex-direction: column;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-    border-color: rgba($accent, 0.25);
+    box-shadow: var(--sh-md);
+    border-color: rgba(244, 63, 94, 0.25);
   }
 }
 
@@ -122,6 +113,7 @@ $transition: 0.3s ease;
   display: flex;
   flex-direction: column;
   flex: 1;
+  cursor: pointer;
 }
 
 .card-img {
@@ -136,9 +128,9 @@ $transition: 0.3s ease;
   top: 0.6rem;
   right: 0.6rem;
   padding: 0.2rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   background: rgba(0, 0, 0, 0.7);
-  color: #ffc107;
+  color: var(--color-warning);
   font-size: 0.78rem;
   font-weight: 600;
   backdrop-filter: blur(4px);
@@ -155,7 +147,7 @@ $transition: 0.3s ease;
 .card-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: $text-primary;
+  color: var(--color-text);
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -166,7 +158,7 @@ $transition: 0.3s ease;
 
 .card-date {
   font-size: 0.78rem;
-  color: $text-muted;
+  color: var(--color-muted);
 }
 
 // === BOTONES ADMIN ===
@@ -181,26 +173,27 @@ $transition: 0.3s ease;
   padding: 0.55rem;
   border: none;
   background: transparent;
+  font-family: var(--font-body);
   font-size: 0.82rem;
   cursor: pointer;
-  transition: all $transition;
+  transition: all var(--t-fast);
 }
 
 .btn-edit {
-  color: #ffc107;
+  color: var(--color-warning);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
 
   &:hover {
-    background: rgba(#ffc107, 0.1);
+    background: rgba(255, 193, 7, 0.1);
   }
 }
 
 .btn-delete {
-  color: $text-muted;
+  color: var(--color-muted);
 
   &:hover:not(:disabled) {
-    background: rgba($accent, 0.12);
-    color: $accent;
+    background: rgba(244, 63, 94, 0.12);
+    color: var(--color-cta);
   }
 
   &:disabled {
@@ -215,21 +208,21 @@ $transition: 0.3s ease;
   top: 0.6rem;
   left: 0.6rem;
   padding: 0.2rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   font-size: 0.7rem;
   font-weight: 600;
   backdrop-filter: blur(4px);
 
-  &.status-playing   { background: rgba(#4fc3f7, 0.85); color: #000; }
-  &.status-completed { background: rgba(#66bb6a, 0.85); color: #000; }
-  &.status-wishlist  { background: rgba(#ffc107, 0.85); color: #000; }
-  &.status-dropped   { background: rgba($accent, 0.85); color: #fff; }
+  &.status-playing   { background: rgba(79, 195, 247, 0.85); color: #000; }
+  &.status-completed { background: rgba(102, 187, 106, 0.85); color: #000; }
+  &.status-wishlist  { background: rgba(255, 193, 7, 0.85); color: #000; }
+  &.status-dropped   { background: rgba(244, 63, 94, 0.85); color: #fff; }
 }
 
 // === NOTAS ===
 .card-notes {
   font-size: 0.75rem;
-  color: $text-muted;
+  color: var(--color-muted);
   margin-top: 0.2rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -242,7 +235,7 @@ $transition: 0.3s ease;
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 2000;
+  z-index: var(--z-modal);
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
@@ -251,16 +244,17 @@ $transition: 0.3s ease;
 }
 
 .modal-card {
-  background: $bg-card;
-  border: 1px solid rgba($accent, 0.3);
-  border-radius: 12px;
+  background: var(--color-card);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  border-radius: var(--r-lg);
   padding: 2rem;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--sh-lg);
 
   h3 {
-    color: $text-primary;
+    font-family: var(--font-title);
+    color: var(--color-text);
     font-size: 1.15rem;
     margin-bottom: 1.2rem;
   }
@@ -271,7 +265,7 @@ $transition: 0.3s ease;
 
   label {
     display: block;
-    color: $text-muted;
+    color: var(--color-muted);
     font-size: 0.85rem;
     margin-bottom: 0.3rem;
   }
@@ -280,16 +274,18 @@ $transition: 0.3s ease;
   textarea {
     width: 100%;
     padding: 0.6rem 0.8rem;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: color.adjust($bg-card, $lightness: -5%);
-    color: $text-primary;
+    // Slightly darker than card — replaces color.adjust($bg-card, $lightness: -5%)
+    background: #0f1a30;
+    color: var(--color-text);
+    font-family: var(--font-body);
     font-size: 0.9rem;
     outline: none;
-    transition: border-color $transition;
+    transition: border-color var(--t-fast);
 
     &:focus {
-      border-color: $accent;
+      border-color: var(--color-cta);
     }
   }
 
@@ -309,15 +305,16 @@ $transition: 0.3s ease;
   flex: 1;
   padding: 0.6rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: transparent;
-  color: $text-muted;
+  color: var(--color-muted);
+  font-family: var(--font-body);
   cursor: pointer;
-  transition: all $transition;
+  transition: all var(--t-fast);
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.3);
-    color: $text-primary;
+    color: var(--color-text);
   }
 }
 
@@ -325,21 +322,27 @@ $transition: 0.3s ease;
   flex: 1;
   padding: 0.6rem;
   border: none;
-  border-radius: 8px;
-  background: $accent;
+  border-radius: var(--r-md);
+  background: var(--color-cta);
   color: #fff;
+  font-family: var(--font-body);
   font-weight: 600;
   cursor: pointer;
-  transition: all $transition;
+  transition: all var(--t-fast);
 
   &:hover:not(:disabled) {
-    background: $accent-hover;
-    box-shadow: 0 4px 16px rgba($accent, 0.3);
+    background: var(--color-cta-h);
+    box-shadow: var(--sh-cta);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: wait;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
   }
 }
 
@@ -349,7 +352,7 @@ $transition: 0.3s ease;
   font-size: 0.85rem;
 
   &.success {
-    color: #66bb6a;
+    color: var(--color-success);
   }
 }
 

@@ -56,12 +56,14 @@ service cloud.firestore {
     // === JUEGOS OCULTOS DEL CATÁLOGO (Admin) ===
     // Colección: hidden_games/{gameId}
     // Campos: id, name, background_image, rating, hiddenAt, hiddenByUid
+    // Seguridad: usa custom claims server-side (admin:true en el token JWT)
     match /hidden_games/{gameId} {
-      // Cualquier usuario puede leer (para filtrar en el catálogo)
+      // Cualquier usuario autenticado puede leer (para filtrar en el catálogo)
       allow read: if request.auth != null;
 
-      // Solo admins pueden crear/eliminar (se valida en frontend por rol)
-      allow create, delete: if request.auth != null;
+      // Solo admins verificados por custom claim server-side
+      allow create, delete: if request.auth != null
+                            && request.auth.token.admin == true;
 
       allow update: if false;
     }
@@ -69,20 +71,22 @@ service cloud.firestore {
     // === JUEGOS CUSTOM SUBIDOS POR USUARIOS ===
     // Colección: custom_games/{gameId}
     // Campos: id, name, description, background_image, rating, released, genres, platforms, addedByUid, addedAt, isCustom
+    // Seguridad: usa custom claims server-side (admin:true en el token JWT)
     match /custom_games/{gameId} {
       // Cualquier usuario (incluso no autenticado) puede leer
       allow read: if true;
 
-      // Solo admins pueden crear juegos custom
+      // Solo admins verificados por custom claim server-side
       allow create: if request.auth != null
+                    && request.auth.token.admin == true
                     && request.resource.data.addedByUid == request.auth.uid
                     && request.resource.data.keys().hasAll(['id', 'name', 'addedByUid', 'addedAt']);
 
-      // Solo admins pueden eliminar juegos custom
-      allow delete: if request.auth != null;
+      allow delete: if request.auth != null
+                    && request.auth.token.admin == true;
 
-      // Admins pueden editar juegos custom
-      allow update: if request.auth != null;
+      allow update: if request.auth != null
+                    && request.auth.token.admin == true;
     }
 
     // === SISTEMA DE SEGUIMIENTO (follows) ===

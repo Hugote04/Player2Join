@@ -204,15 +204,22 @@ export class UserProfileComponent implements OnInit {
 
   async toggleFollow() {
     this.toggling.set(true);
+    const currentUid = this.authService.currentUserSig()?.uid;
     try {
       if (this.isFollowing()) {
         await this.socialService.unfollowUser(this.targetUid);
         this.isFollowing.set(false);
         this.followersCount.update(c => Math.max(0, c - 1));
+        this.isMutualFollow.set(false);
       } else {
         await this.socialService.followUser(this.targetUid);
         this.isFollowing.set(true);
         this.followersCount.update(c => c + 1);
+        // Re-check mutual inmediatamente para mostrar el botón DM sin recargar
+        if (currentUid) {
+          const mutual = await this.socialService.areMutualFollowers(currentUid, this.targetUid);
+          this.isMutualFollow.set(mutual);
+        }
       }
     } finally {
       this.toggling.set(false);

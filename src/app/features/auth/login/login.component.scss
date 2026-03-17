@@ -1,16 +1,5 @@
-// === VARIABLES ===
-$bg-dark: #0d0d0d;
-$bg-card: #1a1a2e;
-$bg-input: #16213e;
-$accent: #e94560;
-$accent-hover: #ff6b81;
-$text-primary: #eaeaea;
-$text-muted: #888;
-$error-color: #ff4757;
-$radius: 8px;
-$transition: 0.25s ease;
+// === AUTH LOGIN — Tokens desde styles.scss (:root)
 
-// === WRAPPER ===
 .auth-wrapper {
   display: flex;
   justify-content: center;
@@ -19,28 +8,27 @@ $transition: 0.25s ease;
   padding: 2rem;
 }
 
-// === CARD ===
 .auth-card {
-  background: $bg-card;
-  border: 1px solid rgba($accent, 0.2);
-  border-radius: 12px;
+  background: var(--color-card);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-radius: var(--r-lg);
   padding: 2.5rem;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--sh-md);
 }
 
 .auth-title {
+  font-family: var(--font-title);
   font-size: 1.6rem;
-  font-weight: 700;
-  color: $text-primary;
+  color: var(--color-text);
   text-align: center;
   margin-bottom: 0.25rem;
 }
 
 .auth-subtitle {
   text-align: center;
-  color: $text-muted;
+  color: var(--color-muted);
   font-size: 0.9rem;
   margin-bottom: 1.8rem;
 }
@@ -51,7 +39,7 @@ $transition: 0.25s ease;
 
   label {
     display: block;
-    color: $text-muted;
+    color: var(--color-muted);
     font-size: 0.85rem;
     font-weight: 500;
     margin-bottom: 0.4rem;
@@ -60,32 +48,33 @@ $transition: 0.25s ease;
   input {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: $bg-input;
+    background: var(--color-input);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: $radius;
-    color: $text-primary;
+    border-radius: var(--r-sm);
+    color: var(--color-text);
+    font-family: var(--font-body);
     font-size: 0.95rem;
     outline: none;
-    transition: border-color $transition;
+    transition: border-color var(--t-fast);
 
     &::placeholder {
-      color: rgba($text-muted, 0.6);
+      color: rgba(148, 163, 184, 0.5);
     }
 
     &:focus {
-      border-color: $accent;
-      box-shadow: 0 0 0 2px rgba($accent, 0.15);
+      border-color: var(--color-cta);
+      box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.15);
     }
 
     &.invalid {
-      border-color: $error-color;
+      border-color: var(--color-error);
     }
   }
 }
 
 .field-error {
   display: block;
-  color: $error-color;
+  color: var(--color-error);
   font-size: 0.78rem;
   margin-top: 0.3rem;
 }
@@ -95,53 +84,59 @@ $transition: 0.25s ease;
   width: 100%;
   padding: 0.8rem;
   margin-top: 0.5rem;
-  background: $accent;
+  background: var(--color-cta);
   color: #fff;
   border: none;
-  border-radius: $radius;
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all $transition;
+  transition: all var(--t-fast);
 
   &:hover:not(:disabled) {
-    background: $accent-hover;
+    background: var(--color-cta-h);
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba($accent, 0.4);
+    box-shadow: var(--sh-cta);
   }
 
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 2px;
+  }
 }
 
 // === ERROR GLOBAL ===
 .global-error {
   text-align: center;
-  color: $error-color;
+  color: var(--color-error);
   font-size: 0.85rem;
   margin-top: 1rem;
   padding: 0.6rem;
-  background: rgba($error-color, 0.1);
-  border-radius: $radius;
+  background: rgba(255, 71, 87, 0.1);
+  border-radius: var(--r-sm);
 }
 
 // === FOOTER ===
 .auth-footer {
   text-align: center;
-  color: $text-muted;
+  color: var(--color-muted);
   font-size: 0.85rem;
   margin-top: 1.5rem;
 }
 
 .link-accent {
-  color: $accent;
+  color: var(--color-cta);
   font-weight: 600;
-  transition: color $transition;
+  transition: color var(--t-fast);
 
   &:hover {
-    color: $accent-hover;
+    color: var(--color-cta-h);
   }
 }
 
